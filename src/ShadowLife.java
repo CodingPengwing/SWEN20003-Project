@@ -24,7 +24,7 @@ public class ShadowLife extends AbstractGame {
     public static void main(String[] args) {
         ShadowLife game = new ShadowLife();
         // Create the setting for current World and add to 'worlds' array
-        createSetting("res/worlds/harvest.csv");
+        createSetting("res/worlds/product.csv");
         game.run();
     }
 
@@ -50,8 +50,13 @@ public class ShadowLife extends AbstractGame {
     // Draws all Actors and the background in the World's current state
     public void drawCurrentState() {
         background.drawFromTopLeft(0, 0);
-        for (Actor actor : Actor.stationaryActors) { actor.render(); }
-        for (Actor actor : MobileActor.mobileActors) {
+        for (Actor actor : Actor.stationaryActors) {
+            actor.render();
+        }
+        for (Actor actor : Gatherer.gatherers) {
+            actor.render();
+        }
+        for (Actor actor : Thief.thieves) {
             actor.render();
         }
     }
@@ -101,7 +106,7 @@ public class ShadowLife extends AbstractGame {
                         case "SignRight":
                             new Sign(x, y, Direction.RIGHT);
                             break;
-                        case "MitosisPool":
+                        case "Pool":
                             new MitosisPool(x, y);
                             break;
                         case "Gatherer":

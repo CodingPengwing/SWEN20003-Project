@@ -2,15 +2,18 @@
 import java.util.ArrayList;
 public class Gatherer extends MobileActor {
 
+    public static ArrayList<Gatherer> gatherers = new ArrayList<>();
+
     // Constructor with preset gatherer image
     public Gatherer(double x, double y, int direction)
     {
         super(x, y, "res/images/gatherer.png", direction);
-        mobileActors.add(this);
+        gatherers.add(this);
     }
 
     public void tick() {
-        if (active) move();
+        if (!active) return;
+        move();
         for (Actor actor : stationaryActors) {
             if (actor.location.equals(location)) {
                 if (actor instanceof Fence) {
@@ -23,7 +26,7 @@ public class Gatherer extends MobileActor {
                     Gatherer g2 = new Gatherer(location.getX(), location.getY(), direction.getDirection()+90);
                     g1.move();
                     g2.move();
-                    mobileActors.remove(this);
+                    gatherers.remove(this);
                 }
                 if (actor instanceof Sign) {
                     direction.setDirection(((Sign) actor).getDirection());

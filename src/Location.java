@@ -21,12 +21,12 @@ public class Location {
 
     // Moves the Location one tile up
     public void moveUp() {
-        y = y + TILE_SIZE;
+        y = y - TILE_SIZE;
     }
 
     // Moves the Location one tile down
     public void moveDown() {
-        y = y - TILE_SIZE;
+        y = y + TILE_SIZE;
     }
 
     // Moves the Location one tile to the left

@@ -5,8 +5,6 @@ public abstract class MobileActor extends Actor {
     protected boolean carrying;
     protected Direction direction;
 
-    public static ArrayList<MobileActor> mobileActors = new ArrayList<>();
-
     public MobileActor(double x, double y, String imagePath, int direction) {
         super(x, y, imagePath);
         active = true;
@@ -14,7 +12,7 @@ public abstract class MobileActor extends Actor {
         this.direction = new Direction(direction);
     }
 
-    // Moves the Actor one tile in the direction they are currently heading towards
+    // Moves the Actor one tile in the direction they are currently facing
     public void move() {
         switch (direction.getDirection()) {
             case Direction.UP:
@@ -33,20 +31,15 @@ public abstract class MobileActor extends Actor {
     }
 
     public static void updateActors() {
-        for (MobileActor actor : mobileActors) {
-            if (actor instanceof Gatherer) {
-                Gatherer gatherer = (Gatherer) actor;
-                gatherer.tick();
-            }
-            else if (actor instanceof Thief) {
-                Thief thief = (Thief) actor;
-                thief.tick();
-            }
-        }
+        for (Gatherer gatherer : Gatherer.gatherers) gatherer.tick();
+        for (Thief thief : Thief.thieves) thief.tick();
     }
 
     public static boolean actorsActive() {
-        for (MobileActor actor : mobileActors) {
+        for (MobileActor actor : Gatherer.gatherers) {
+            if (actor.active) return true;
+        }
+        for (MobileActor actor : Thief.thieves) {
             if (actor.active) return true;
         }
         return false;
