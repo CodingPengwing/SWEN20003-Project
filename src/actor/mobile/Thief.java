@@ -7,8 +7,7 @@ public class Thief extends MobileActor {
     private boolean consuming;
 
     // Constructor with default Thief image
-    public Thief(double x, double y, int direction)
-    {
+    public Thief(double x, double y, int direction) {
         super(x, y, "src/res/images/thief.png", direction);
         consuming = false;
         thieves.add(this);
@@ -21,7 +20,7 @@ public class Thief extends MobileActor {
         for (Actor actor : stationaryActors) {
             if (actor.locationMatch(this)) {
                 if (actor instanceof Fence) { interactFence(); }
-                if (actor instanceof MitosisPool) { interactPool(); }
+                if (actor instanceof MitosisPool) { interactPool(); return; }
                 if (actor instanceof Sign) { interactSign(actor); }
                 if (actor instanceof Pad) { interactPad(); }
             }

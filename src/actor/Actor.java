@@ -6,10 +6,10 @@ import java.util.ArrayList;
 
 public abstract class Actor {
     private Image image;
-    protected Location location;
+    final protected Location location;
 
     // To store the current Actors in the game that don't move
-    protected static ArrayList<Actor> stationaryActors = new ArrayList<>();
+    final protected static ArrayList<Actor> stationaryActors = new ArrayList<>();
 
     public Actor(double x, double y) {
         this.location = new Location(x, y);
@@ -20,7 +20,7 @@ public abstract class Actor {
         image = new Image(imagePath);
     }
 
-    protected void setImage(String imagePath) {
+    final protected void setImage(String imagePath) {
         image = new Image(imagePath);
     }
 
@@ -30,7 +30,7 @@ public abstract class Actor {
     }
 
     // Determines if 2 Actors are in the same location
-    public boolean locationMatch(Actor actor) {
+    final public boolean locationMatch(Actor actor) {
         if (location.equals(actor.location)) return true;
         return false;
     }

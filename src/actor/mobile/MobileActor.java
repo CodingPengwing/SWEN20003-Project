@@ -10,8 +10,8 @@ public abstract class MobileActor extends Actor {
     protected Direction direction;
 
     // To store the current Gatherers and Thieves in the game
-    protected static ArrayList<MobileActor> gatherers = new ArrayList<>();
-    protected static ArrayList<MobileActor> thieves = new ArrayList<>();
+    final protected static ArrayList<MobileActor> gatherers = new ArrayList<>();
+    final protected static ArrayList<MobileActor> thieves = new ArrayList<>();
 
     public MobileActor(double x, double y, String imagePath, int direction) {
         super(x, y, imagePath);
@@ -21,7 +21,7 @@ public abstract class MobileActor extends Actor {
     }
 
     // Moves the Actor one tile in the direction they are currently facing
-    protected void move() {
+    final protected void move() {
         switch (direction.getDirection()) {
             case Direction.UP:
                 location.moveUp();

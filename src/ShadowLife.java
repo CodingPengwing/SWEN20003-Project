@@ -1,5 +1,3 @@
-package main;
-
 import actor.*;
 import actor.fruitstorage.*;
 import actor.mobile.*;
@@ -9,17 +7,21 @@ import bagel.Image;
 import bagel.Input;
 
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Scanner;
 
 public class ShadowLife extends AbstractGame {
     private static final int GAME_HEIGHT = 768;
     private static final int GAME_WIDTH = 1024;
-    private static final int TICK_TIME = 1;
     private static final int BACKGROUND_X = 0;
     private static final int BACKGROUND_Y = 0;
-    private int tickCount;
-    private int maxTicks;
+    private static int tickRate;
+    private static int maxTicks;
     private long lastTick;
+    private int tickCount;
     private final Image background = new Image("src/res/images/background.png");
 
     public ShadowLife() {
@@ -31,7 +33,8 @@ public class ShadowLife extends AbstractGame {
     // Start of the program
     public static void main(String[] args) {
         ShadowLife game = new ShadowLife();
-        createSetting("src/res/worlds/harvest.csv");
+        String worldFile = getInput();
+        createSetting(worldFile);
         game.run();
     }
 
@@ -40,7 +43,7 @@ public class ShadowLife extends AbstractGame {
     public void update(Input input) {
         long currentTime = System.currentTimeMillis();
         // Update the state of the game every tick (500ms)
-        if (currentTime - lastTick > TICK_TIME) {
+        if (currentTime - lastTick > tickRate) {
             updateState();
             lastTick = currentTime;
             tickCount++;
@@ -69,17 +72,49 @@ public class ShadowLife extends AbstractGame {
     }
 
     // Gets input from stdin
-    private static void getInput() {
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
-        System.out.println(input);
+    private static String getInput() {
+        final int EXPECTED_INPUTS = 3;
+        final int FAILURE = -1;
+
+        String inputs[] = argsFromFile();
+
+        // Check number of inputs
+        if (inputs.length != EXPECTED_INPUTS) {
+            System.out.println("usage: ShadowLife <tick rate> <max ticks> <world file>");
+            System.exit(FAILURE);
+        }
+        // Check for non integer input
+        for (char c : (inputs[0]+inputs[1]).toCharArray()) {
+            if (!Character.isDigit(c)) {
+                System.out.println("usage: ShadowLife <tick rate> <max ticks> <world file>");
+                System.exit(FAILURE);
+            }
+        }
+
+        tickRate = Integer.parseInt(inputs[0]);
+        maxTicks = Integer.parseInt(inputs[1]);
+
+        return inputs[2];
+    }
+
+    private static String[] argsFromFile() {
+        try {
+            return Files.readString(Path.of("args.txt"), Charset.defaultCharset()).split(" ");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // Opens the given worldFile and creates Actors for the game
     private static void createSetting(String worldFile) {
+        final int EXPECTED_INPUTS = 3;
         try (Scanner scanner = new Scanner(new FileReader(worldFile))) {
             while (scanner.hasNextLine()) {
                 String[] input = scanner.nextLine().split(",");
+
+                if (input.length != EXPECTED_INPUTS) {}
+
                 // After splitting, the first value should be the type of Actor,
                 // the second and third values should be the x and y coordinates.
                 String type = input[0];
@@ -134,6 +169,8 @@ public class ShadowLife extends AbstractGame {
             }
         }
         catch (Exception e) {
+            System.out.println("error: file \"" + worldFile + "\" not found");
+            System.exit(-1);
             e.printStackTrace();
         }
     }

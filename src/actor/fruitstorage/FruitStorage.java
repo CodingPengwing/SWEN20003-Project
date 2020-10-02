@@ -12,23 +12,23 @@ public abstract class FruitStorage extends Actor {
         this.numFruit = numFruit;
     }
 
-    public int getNumFruit() {
+    final public int getNumFruit() {
         return numFruit;
     }
 
     // Increase numFruit by 1
-    public void increaseNumFruit() {
+    final public void increaseNumFruit() {
         numFruit++;
     }
 
     // Decrease numFruit by 1
-    public void decreaseNumFruit() {
+    final public void decreaseNumFruit() {
         numFruit--;
     }
 
     // Overrides default render method to render the number of fruits as well as Actor image
     @Override
-    protected void render() {
+    final protected void render() {
         super.render();
         Font font = new Font("src/res/VeraMono.ttf",NUM_FRUIT_FONT_SIZE);
         font.drawString(Integer.toString(numFruit), location.getX(), location.getY());
