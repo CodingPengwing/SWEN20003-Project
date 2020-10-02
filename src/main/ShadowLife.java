@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class ShadowLife extends AbstractGame {
     private static final int GAME_HEIGHT = 768;
     private static final int GAME_WIDTH = 1024;
-    private static final int TICK_TIME = 100;
+    private static final int TICK_TIME = 1;
     private static final int BACKGROUND_X = 0;
     private static final int BACKGROUND_Y = 0;
     private int tickCount;
@@ -31,7 +31,7 @@ public class ShadowLife extends AbstractGame {
     // Start of the program
     public static void main(String[] args) {
         ShadowLife game = new ShadowLife();
-        createSetting("src/res/worlds/product.csv");
+        createSetting("src/res/worlds/harvest.csv");
         game.run();
     }
 
@@ -39,7 +39,7 @@ public class ShadowLife extends AbstractGame {
     @Override
     public void update(Input input) {
         long currentTime = System.currentTimeMillis();
-        // Update the state of the world every tick (500ms)
+        // Update the state of the game every tick (500ms)
         if (currentTime - lastTick > TICK_TIME) {
             updateState();
             lastTick = currentTime;
@@ -58,7 +58,7 @@ public class ShadowLife extends AbstractGame {
         MobileActor.renderMobileActors();
     }
 
-    // Update the state of the world
+    // Update the state of the game
     private void updateState() {
         MobileActor.tickMobileActors();
     }
@@ -85,7 +85,8 @@ public class ShadowLife extends AbstractGame {
                 String type = input[0];
                 double x = Double.parseDouble(input[1]);
                 double y = Double.parseDouble(input[2]);
-                // Check whether the Actors are spawned in a valid tile, if yes,
+
+                // Check whether the Actors are given in a valid tile, if yes,
                 // create an instance.
                 if (Location.isWellDefined(x, y)) {
                     switch (type) {
