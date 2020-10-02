@@ -6,7 +6,7 @@ import actor.fruitstorage.*;
 public class Thief extends MobileActor {
     private boolean consuming;
 
-    // Constructor with default gatherer image
+    // Constructor with default Thief image
     public Thief(double x, double y, int direction)
     {
         super(x, y, "src/res/images/thief.png", direction);
@@ -14,6 +14,7 @@ public class Thief extends MobileActor {
         thieves.add(this);
     }
 
+    // Tick logic for Thieves
     protected void tick() {
         if (!active) return;
         move();
@@ -38,12 +39,14 @@ public class Thief extends MobileActor {
         }
     }
 
+    // Interacting with Fence
     private void interactFence() {
         active = false;
         direction.rotateReverse();
         move();
     }
 
+    // Interacting with Mitosis Pool
     private void interactPool() {
         Thief t1 = new Thief(location.getX(), location.getY(), direction.getDirection());
         Thief t2 = new Thief(location.getX(), location.getY(), direction.getDirection());
@@ -54,24 +57,29 @@ public class Thief extends MobileActor {
         thieves.remove(this);
     }
 
+    // Interacting with Sign
     private void interactSign(Actor actor) {
         direction.setDirection(((Sign) actor).getDirection());
     }
 
+    // Interacting with Pad
     private void interactPad() {
         consuming = true;
     }
 
+    // Interacting with Gatherer
     private void interactGatherer() {
         direction.rotateLeft();
     }
 
+    // Interacting with Golden Tree
     private void interactGoldenTree() {
         if (!carrying) {
             carrying = true;
         }
     }
 
+    // Interacting with Tree
     private void interactTree(Actor actor) {
         if (!carrying) {
             FruitStorage tree = (FruitStorage) actor;
@@ -82,6 +90,7 @@ public class Thief extends MobileActor {
         }
     }
 
+    // Interacting with Hoard
     private void interactHoard(Actor actor) {
         Hoard hoard = (Hoard) actor;
         if (consuming) {
@@ -103,6 +112,7 @@ public class Thief extends MobileActor {
         }
     }
 
+    // Interacting with Stockpile
     private void interactStockpile(Actor actor) {
         Stockpile stockpile = (Stockpile) actor;
         if (!carrying) {

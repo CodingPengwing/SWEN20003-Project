@@ -16,15 +16,17 @@ public abstract class FruitStorage extends Actor {
         return numFruit;
     }
 
+    // Increase numFruit by 1
     public void increaseNumFruit() {
         numFruit++;
     }
 
+    // Decrease numFruit by 1
     public void decreaseNumFruit() {
         numFruit--;
     }
 
-    // Overrides default render method to render the number of fruits on top
+    // Overrides default render method to render the number of fruits as well as Actor image
     @Override
     protected void render() {
         super.render();

@@ -9,7 +9,7 @@ public abstract class MobileActor extends Actor {
     protected boolean carrying;
     protected Direction direction;
 
-    // To store the current gatherers and thieves in the game
+    // To store the current Gatherers and Thieves in the game
     protected static ArrayList<MobileActor> gatherers = new ArrayList<>();
     protected static ArrayList<MobileActor> thieves = new ArrayList<>();
 
@@ -20,7 +20,7 @@ public abstract class MobileActor extends Actor {
         this.direction = new Direction(direction);
     }
 
-    // Moves the actor.Actor one tile in the direction they are currently facing
+    // Moves the Actor one tile in the direction they are currently facing
     protected void move() {
         switch (direction.getDirection()) {
             case Direction.UP:
@@ -38,13 +38,13 @@ public abstract class MobileActor extends Actor {
         }
     }
 
-    // Ticks every actor in gatherers and thieves arrays
+    // Ticks every Actor in gatherers and thieves arrays
     public static void tickMobileActors() {
         for (MobileActor actor : gatherers) actor.tick();
         for (MobileActor actor : thieves) actor.tick();
     }
 
-    // Renders every actor in gatherers and thieves arrays
+    // Renders every Actor in gatherers and thieves arrays
     public static void renderMobileActors() {
         for (MobileActor actor : gatherers) actor.render();
         for (MobileActor actor : thieves) actor.render();

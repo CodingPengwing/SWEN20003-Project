@@ -5,18 +5,15 @@ public class Location {
     private double x;
     private double y;
 
-    // Constructor
     public Location(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    // Returns x coordinate
     public double getX() {
         return x;
     }
 
-    // Returns y coordinate
     public double getY() {
         return y;
     }

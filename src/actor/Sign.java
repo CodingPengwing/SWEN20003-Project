@@ -4,7 +4,7 @@ import maplogic.Direction;
 
 public class Sign extends Actor {
     private Direction direction;
-    // Constructor with default sign images
+    // Constructor with default Sign images
     public Sign(double x, double y, int direction) {
         super(x, y);
         this.direction = new Direction(direction);
