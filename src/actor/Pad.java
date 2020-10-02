@@ -1,7 +1,9 @@
+package actor;
+
 public class Pad extends Actor {
-    // Constructor with preset tree image
+    // Constructor with default pad image
     public Pad(double x, double y) {
-        super(x, y, "res/images/pad.png");
+        super(x, y, "src/res/images/pad.png");
         stationaryActors.add(this);
     }
 }

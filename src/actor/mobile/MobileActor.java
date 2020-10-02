@@ -1,9 +1,17 @@
+package actor.mobile;
+
+import actor.Actor;
+import maplogic.*;
 import java.util.ArrayList;
 
 public abstract class MobileActor extends Actor {
     protected boolean active;
     protected boolean carrying;
     protected Direction direction;
+
+    // To store the current gatherers and thieves in the game
+    protected static ArrayList<MobileActor> gatherers = new ArrayList<>();
+    protected static ArrayList<MobileActor> thieves = new ArrayList<>();
 
     public MobileActor(double x, double y, String imagePath, int direction) {
         super(x, y, imagePath);
@@ -12,8 +20,8 @@ public abstract class MobileActor extends Actor {
         this.direction = new Direction(direction);
     }
 
-    // Moves the Actor one tile in the direction they are currently facing
-    public void move() {
+    // Moves the actor.Actor one tile in the direction they are currently facing
+    protected void move() {
         switch (direction.getDirection()) {
             case Direction.UP:
                 location.moveUp();
@@ -30,20 +38,28 @@ public abstract class MobileActor extends Actor {
         }
     }
 
-    public static void updateActors() {
-        for (Gatherer gatherer : Gatherer.gatherers) gatherer.tick();
-        for (Thief thief : Thief.thieves) thief.tick();
+    // Ticks every actor in gatherers and thieves arrays
+    public static void tickMobileActors() {
+        for (MobileActor actor : gatherers) actor.tick();
+        for (MobileActor actor : thieves) actor.tick();
+    }
+
+    // Renders every actor in gatherers and thieves arrays
+    public static void renderMobileActors() {
+        for (MobileActor actor : gatherers) actor.render();
+        for (MobileActor actor : thieves) actor.render();
     }
 
     public static boolean actorsActive() {
-        for (MobileActor actor : Gatherer.gatherers) {
+        for (MobileActor actor : gatherers) {
             if (actor.active) return true;
         }
-        for (MobileActor actor : Thief.thieves) {
+        for (MobileActor actor : thieves) {
             if (actor.active) return true;
         }
         return false;
     }
 
+    // Every child must implement their own tick method
     abstract void tick();
 }

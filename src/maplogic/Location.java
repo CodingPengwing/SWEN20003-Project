@@ -1,3 +1,5 @@
+package maplogic;
+
 public class Location {
     final static private int TILE_SIZE = 64;
     private double x;

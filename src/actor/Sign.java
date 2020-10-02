@@ -1,24 +1,27 @@
-import bagel.Image;
-import org.lwjgl.system.CallbackI;
+package actor;
+
+import maplogic.Direction;
 
 public class Sign extends Actor {
     private Direction direction;
-    // Constructor with preset tree image
+    // Constructor with default sign images
     public Sign(double x, double y, int direction) {
         super(x, y);
         this.direction = new Direction(direction);
+
+        // Determine which image is needed from the direction given
         switch (direction) {
             case Direction.UP:
-                image = new Image("res/images/up.png");
+                setImage("src/res/images/up.png");
                 break;
             case Direction.DOWN:
-                image = new Image("res/images/down.png");
+                setImage("src/res/images/down.png");
                 break;
             case Direction.RIGHT:
-                image = new Image("res/images/right.png");
+                setImage("src/res/images/right.png");
                 break;
             case Direction.LEFT:
-                image = new Image("res/images/left.png");
+                setImage("src/res/images/left.png");
                 break;
         }
         stationaryActors.add(this);

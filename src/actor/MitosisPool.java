@@ -1,7 +1,9 @@
+package actor;
+
 public class MitosisPool extends Actor {
-    // Constructor with preset tree image
+    // Constructor with default mitosis pool image
     public MitosisPool(double x, double y) {
-        super(x, y, "res/images/pool.png");
+        super(x, y, "src/res/images/pool.png");
         stationaryActors.add(this);
     }
 }

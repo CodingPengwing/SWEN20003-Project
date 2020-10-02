@@ -1,81 +1,94 @@
+package main;
+
+import actor.*;
+import actor.fruitstorage.*;
+import actor.mobile.*;
+import maplogic.*;
 import bagel.AbstractGame;
 import bagel.Image;
 import bagel.Input;
 
-import javax.swing.plaf.TableHeaderUI;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.io.FileReader;
 import java.util.Scanner;
 
 public class ShadowLife extends AbstractGame {
-    private static int TICK_LENGTH = 200;
-    private static boolean firstTick = true;
-    private static int tickCount = 0;
-    private final Image background = new Image("res/images/background.png");
-    // To keep track of the previous update time
-    private long lastTick = System.currentTimeMillis();
+    private static final int GAME_HEIGHT = 768;
+    private static final int GAME_WIDTH = 1024;
+    private static final int TICK_TIME = 100;
+    private static final int BACKGROUND_X = 0;
+    private static final int BACKGROUND_Y = 0;
+    private int tickCount;
+    private int maxTicks;
+    private long lastTick;
+    private final Image background = new Image("src/res/images/background.png");
 
     public ShadowLife() {
-        // Default dimensions with name of game
-        super(1024, 768, "Shadow Life");
+        super(GAME_WIDTH, GAME_HEIGHT, "Shadow Life");
+        tickCount = 0;
+        lastTick = System.currentTimeMillis();
     }
 
     // Start of the program
     public static void main(String[] args) {
         ShadowLife game = new ShadowLife();
-        // Create the setting for current World and add to 'worlds' array
-        createSetting("res/worlds/product.csv");
+        createSetting("src/res/worlds/product.csv");
         game.run();
     }
 
-    // Provides the game with updates to each Actor's location every tick (500ms)
+    // Renders the game constantly, provides the game with updates every tick (500ms)
     @Override
     public void update(Input input) {
         long currentTime = System.currentTimeMillis();
-
-        if (firstTick) {
-            drawCurrentState();
-            firstTick = false;
+        // Update the state of the world every tick (500ms)
+        if (currentTime - lastTick > TICK_TIME) {
+            updateState();
+            lastTick = currentTime;
+            tickCount++;
         }
-        else {
-            // Only update the state of the world every tick (500ms)
-            if (currentTime - lastTick > TICK_LENGTH) {
-                MobileActor.updateActors();
-                lastTick = currentTime;
-            }
-            drawCurrentState();
+        renderState();
+        if (tickCount > maxTicks) {
+            stopGame();
         }
     }
 
-    // Draws all Actors and the background in the World's current state
-    public void drawCurrentState() {
-        background.drawFromTopLeft(0, 0);
-        for (Actor actor : Actor.stationaryActors) {
-            actor.render();
-        }
-        for (Actor actor : Gatherer.gatherers) {
-            actor.render();
-        }
-        for (Actor actor : Thief.thieves) {
-            actor.render();
-        }
+    // Draws all Actors and the background in the game's current state
+    private void renderState() {
+        background.drawFromTopLeft(BACKGROUND_X, BACKGROUND_Y);
+        Actor.renderStationaryActors();
+        MobileActor.renderMobileActors();
     }
 
+    // Update the state of the world
+    private void updateState() {
+        MobileActor.tickMobileActors();
+    }
 
+    // Stops the game and provides output to stdout
+    private void stopGame() {
 
+    }
+
+    // Gets input from stdin
+    private static void getInput() {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        System.out.println(input);
+    }
+
+    // Opens the given worldFile and creates Actors for the game
     private static void createSetting(String worldFile) {
-        // Open world file and take input
         try (Scanner scanner = new Scanner(new FileReader(worldFile))) {
             while (scanner.hasNextLine()) {
-                // This program assumes the input given is cleaned
                 String[] input = scanner.nextLine().split(",");
+                // After splitting, the first value should be the type of Actor,
+                // the second and third values should be the x and y coordinates.
+                String type = input[0];
                 double x = Double.parseDouble(input[1]);
                 double y = Double.parseDouble(input[2]);
-
                 // Check whether the Actors are spawned in a valid tile, if yes,
-                // create and store Trees/Gatherers in their respective arrays
+                // create an instance.
                 if (Location.isWellDefined(x, y)) {
-                    switch (input[0]) {
+                    switch (type) {
                         case "Tree":
                             new Tree(x, y);
                             break;
