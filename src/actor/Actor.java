@@ -30,7 +30,7 @@ public abstract class Actor {
     }
 
     // Determines if 2 Actors are in the same location
-    final public boolean locationMatch(Actor actor) {
+    final public boolean locationEquals(Actor actor) {
         if (location.equals(actor.location)) return true;
         return false;
     }
@@ -39,4 +39,5 @@ public abstract class Actor {
     public static void renderStationaryActors() {
         for (Actor actor : stationaryActors) actor.render();
     }
+
 }

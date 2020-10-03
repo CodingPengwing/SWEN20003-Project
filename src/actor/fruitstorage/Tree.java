@@ -8,4 +8,3 @@ public class Tree extends FruitStorage {
         stationaryActors.add(this);
     }
 }
-

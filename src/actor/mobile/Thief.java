@@ -7,18 +7,19 @@ public class Thief extends MobileActor {
     private boolean consuming;
 
     // Constructor with default Thief image
-    public Thief(double x, double y, int direction) {
+    public Thief(double x, double y, int direction, boolean initialActor) {
         super(x, y, "src/res/images/thief.png", direction);
         consuming = false;
-        thieves.add(this);
+        if (initialActor) thieves.add(this);
+        else newMobileActors.add(this);
     }
 
     // Tick logic for Thieves
     protected void tick() {
-        if (!active) return;
+        if (!isActive()) return;
         move();
         for (Actor actor : stationaryActors) {
-            if (actor.locationMatch(this)) {
+            if (actor.locationEquals(this)) {
                 if (actor instanceof Fence) { interactFence(); }
                 if (actor instanceof MitosisPool) { interactPool(); return; }
                 if (actor instanceof Sign) { interactSign(actor); }
@@ -26,10 +27,10 @@ public class Thief extends MobileActor {
             }
         }
         for (MobileActor gatherer : MobileActor.gatherers) {
-            if (gatherer.locationMatch(this)) { interactGatherer(); break; }
+            if (gatherer.locationEquals(this)) { interactGatherer(); break; }
         }
         for (Actor actor : stationaryActors) {
-            if (actor.locationMatch(this)) {
+            if (actor.locationEquals(this)) {
                 if (actor instanceof GoldenTree) { interactGoldenTree(); }
                 if (actor instanceof Tree) { interactTree(actor); }
                 if (actor instanceof Hoard) { interactHoard(actor); }
@@ -40,20 +41,20 @@ public class Thief extends MobileActor {
 
     // Interacting with Fence
     private void interactFence() {
-        active = false;
+        setActive(false);
         direction.rotateReverse();
         move();
     }
 
     // Interacting with Mitosis Pool
     private void interactPool() {
-        Thief t1 = new Thief(location.getX(), location.getY(), direction.getDirection());
-        Thief t2 = new Thief(location.getX(), location.getY(), direction.getDirection());
-        t1.direction.rotateLeft();
-        t2.direction.rotateRight();
-        t1.move();
-        t2.move();
-        thieves.remove(this);
+        // Create a new Thief and move left
+        Thief thief = new Thief(location.getX(), location.getY(), direction.getDirection(), false);
+        thief.direction.rotateLeft();
+        thief.move();
+        // Move right with existing Thief
+        direction.rotateRight();
+        move();
     }
 
     // Interacting with Sign
@@ -73,17 +74,17 @@ public class Thief extends MobileActor {
 
     // Interacting with Golden Tree
     private void interactGoldenTree() {
-        if (!carrying) {
-            carrying = true;
+        if (!isCarrying()) {
+            setCarrying(true);
         }
     }
 
     // Interacting with Tree
     private void interactTree(Actor actor) {
-        if (!carrying) {
+        if (!isCarrying()) {
             FruitStorage tree = (FruitStorage) actor;
             if (tree.getNumFruit() > 0) {
-                carrying = true;
+                setCarrying(true);
                 tree.decreaseNumFruit();
             }
         }
@@ -94,9 +95,9 @@ public class Thief extends MobileActor {
         Hoard hoard = (Hoard) actor;
         if (consuming) {
             consuming = false;
-            if (!carrying) {
+            if (!isCarrying()) {
                 if (hoard.getNumFruit() > 0) {
-                    carrying = true;
+                    setCarrying(true);
                     hoard.decreaseNumFruit();
                 }
                 else {
@@ -104,8 +105,8 @@ public class Thief extends MobileActor {
                 }
             }
         }
-        else if (carrying) {
-            carrying = false;
+        else if (isCarrying()) {
+            setCarrying(false);
             hoard.increaseNumFruit();
             direction.rotateRight();
         }
@@ -114,9 +115,9 @@ public class Thief extends MobileActor {
     // Interacting with Stockpile
     private void interactStockpile(Actor actor) {
         Stockpile stockpile = (Stockpile) actor;
-        if (!carrying) {
+        if (!isCarrying()) {
             if (stockpile.getNumFruit() > 0) {
-                carrying = true;
+                setCarrying(true);
                 consuming = false;
                 stockpile.decreaseNumFruit();
                 direction.rotateRight();

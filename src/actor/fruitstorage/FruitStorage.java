@@ -4,7 +4,7 @@ import actor.Actor;
 import bagel.Font;
 
 public abstract class FruitStorage extends Actor {
-    private final static int NUM_FRUIT_FONT_SIZE = 25;
+    private final static int FRUIT_FONT_SIZE = 25;
     private int numFruit;
 
     public FruitStorage(double x, double y, String imagePath, int numFruit) {
@@ -30,7 +30,16 @@ public abstract class FruitStorage extends Actor {
     @Override
     final protected void render() {
         super.render();
-        Font font = new Font("src/res/VeraMono.ttf",NUM_FRUIT_FONT_SIZE);
+        Font font = new Font("src/res/VeraMono.ttf", FRUIT_FONT_SIZE);
         font.drawString(Integer.toString(numFruit), location.getX(), location.getY());
+    }
+
+    public static void tallyHoardsAndStockpiles() {
+        for (Actor actor : stationaryActors) {
+            if (actor instanceof Hoard || actor instanceof Stockpile) {
+                FruitStorage fs = (FruitStorage) actor;
+                System.out.println(fs.numFruit);
+            }
+        }
     }
 }

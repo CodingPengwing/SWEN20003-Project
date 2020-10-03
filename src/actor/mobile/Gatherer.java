@@ -5,20 +5,21 @@ import actor.fruitstorage.*;
 
 public class Gatherer extends MobileActor {
     // Constructor with default Gatherer image
-    public Gatherer(double x, double y, int direction)
+    public Gatherer(double x, double y, int direction, boolean initialActor)
     {
         super(x, y, "src/res/images/gatherer.png", direction);
-        MobileActor.gatherers.add(this);
+        if (initialActor) gatherers.add(this);
+        else newMobileActors.add(this);
     }
 
     // Tick logic for Gatherers
     protected void tick() {
-        if (!active) return;
+        if (!isActive()) return;
         move();
         for (Actor actor : Actor.stationaryActors) {
-            if (actor.locationMatch(this)) {
+            if (actor.locationEquals(this)) {
                 if (actor instanceof Fence) { interactFence(); }
-                if (actor instanceof MitosisPool) { interactPool(); }
+                if (actor instanceof MitosisPool) { interactPool(); return; }
                 if (actor instanceof Sign) { interactSign(actor); }
                 if (actor instanceof GoldenTree) { interactGoldenTree(); }
                 if (actor instanceof Tree) { interactTree(actor); }
@@ -30,20 +31,20 @@ public class Gatherer extends MobileActor {
 
     // Interacting with Fence
     private void interactFence() {
-        active = false;
+        setActive(false);
         direction.rotateReverse();
         move();
     }
 
     // Interacting with Mitosis Pool
     private void interactPool() {
-        Gatherer g1 = new Gatherer(location.getX(), location.getY(), direction.getDirection());
-        Gatherer g2 = new Gatherer(location.getX(), location.getY(), direction.getDirection());
+        // Create a new Gatherer and move left
+        Gatherer g1 = new Gatherer(location.getX(), location.getY(), direction.getDirection(), false);
         g1.direction.rotateRight();
-        g2.direction.rotateLeft();
         g1.move();
-        g2.move();
-        MobileActor.gatherers.remove(this);
+        // Move right with existing Gatherer
+        direction.rotateLeft();
+        move();
     }
 
     // Interacting with Sign
@@ -53,18 +54,18 @@ public class Gatherer extends MobileActor {
 
     // Interacting with Golden Tree
     private void interactGoldenTree() {
-        if (!carrying) {
-            carrying = true;
+        if (!isCarrying()) {
+            setCarrying(true);
             direction.rotateReverse();
         }
     }
 
     // Interacting with Tree
     private void interactTree(Actor actor) {
-        if (!carrying) {
+        if (!isCarrying()) {
             FruitStorage tree = (FruitStorage) actor;
             if (tree.getNumFruit() > 0) {
-                carrying = true;
+                setCarrying(true);
                 direction.rotateReverse();
                 tree.decreaseNumFruit();
             }
@@ -73,8 +74,8 @@ public class Gatherer extends MobileActor {
 
     // Interacting with Hoard
     private void interactHoard(Actor actor) {
-        if (carrying) {
-            carrying = false;
+        if (isCarrying()) {
+            setCarrying(false);
             FruitStorage storage = (FruitStorage) actor;
             storage.increaseNumFruit();
         }
