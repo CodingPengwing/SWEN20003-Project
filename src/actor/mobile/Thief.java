@@ -10,7 +10,9 @@ public class Thief extends MobileActor {
     public Thief(double x, double y, int direction, boolean initialActor) {
         super(x, y, "src/res/images/thief.png", direction);
         consuming = false;
+        // If the Thief is initially defined at the start of the simulation
         if (initialActor) thieves.add(this);
+        // If the Thief is created on the fly during the simulation
         else newMobileActors.add(this);
     }
 

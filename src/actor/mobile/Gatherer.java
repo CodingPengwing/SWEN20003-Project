@@ -8,7 +8,9 @@ public class Gatherer extends MobileActor {
     public Gatherer(double x, double y, int direction, boolean initialActor)
     {
         super(x, y, "src/res/images/gatherer.png", direction);
+        // If the Gatherer is initially defined at the start of the simulation
         if (initialActor) gatherers.add(this);
+        // If the Gatherer is created on the fly during the simulation
         else newMobileActors.add(this);
     }
 

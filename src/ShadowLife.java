@@ -59,9 +59,9 @@ public class ShadowLife extends AbstractGame {
         if (!MobileActor.actorsActive()) {
             stopGame();
         }
-        if (tickCount >= maxTicks) {
+        if (tickCount > maxTicks) {
             System.out.println("Timed out");
-            System.exit(SUCCESS);
+            System.exit(FAILURE);
         }
     }
 
@@ -97,53 +97,52 @@ public class ShadowLife extends AbstractGame {
                 double x = Double.parseDouble(input[X_POS]);
                 double y = Double.parseDouble(input[Y_POS]);
 
-                // Check whether the Actors are given in a valid tile, if yes,
-                // create an instance.
-                if (Location.isWellDefined(x, y)) {
-                    switch (type) {
-                        case "Tree":
-                            new Tree(x, y);
-                            break;
-                        case "GoldenTree":
-                            new GoldenTree(x, y);
-                            break;
-                        case "Stockpile":
-                            new Stockpile(x, y);
-                            break;
-                        case "Hoard":
-                            new Hoard(x, y);
-                            break;
-                        case "Pad":
-                            new Pad(x, y);
-                            break;
-                        case "Fence":
-                            new Fence(x, y);
-                            break;
-                        case "SignUp":
-                            new Sign(x, y, Direction.UP);
-                            break;
-                        case "SignDown":
-                            new Sign(x, y, Direction.DOWN);
-                            break;
-                        case "SignLeft":
-                            new Sign(x, y, Direction.LEFT);
-                            break;
-                        case "SignRight":
-                            new Sign(x, y, Direction.RIGHT);
-                            break;
-                        case "Pool":
-                            new MitosisPool(x, y);
-                            break;
-                        case "Gatherer":
-                            new Gatherer(x, y, Direction.LEFT, true);
-                            break;
-                        case "Thief":
-                            new Thief(x, y, Direction.UP, true);
-                            break;
-                        default:
-                            System.out.println("error: in file \"" + worldFile + "\" at line " + lineNumber);
-                            System.exit(FAILURE);
-                    }
+                // Create the Actor instance.
+                // Check whether the Actor type given is valid.
+                switch (type) {
+                    // Location is checked after type checking to detect undefined types first
+                    case "Tree":
+                        if (Location.isWellDefined(x, y)) new Tree(x, y);
+                        break;
+                    case "GoldenTree":
+                        if (Location.isWellDefined(x, y)) new GoldenTree(x, y);
+                        break;
+                    case "Stockpile":
+                        if (Location.isWellDefined(x, y)) new Stockpile(x, y);
+                        break;
+                    case "Hoard":
+                        if (Location.isWellDefined(x, y)) new Hoard(x, y);
+                        break;
+                    case "Pad":
+                        if (Location.isWellDefined(x, y)) new Pad(x, y);
+                        break;
+                    case "Fence":
+                        if (Location.isWellDefined(x, y)) new Fence(x, y);
+                        break;
+                    case "SignUp":
+                        if (Location.isWellDefined(x, y)) new Sign(x, y, Direction.UP);
+                        break;
+                    case "SignDown":
+                        if (Location.isWellDefined(x, y)) new Sign(x, y, Direction.DOWN);
+                        break;
+                    case "SignLeft":
+                        if (Location.isWellDefined(x, y)) new Sign(x, y, Direction.LEFT);
+                        break;
+                    case "SignRight":
+                        if (Location.isWellDefined(x, y)) new Sign(x, y, Direction.RIGHT);
+                        break;
+                    case "Pool":
+                        if (Location.isWellDefined(x, y)) new MitosisPool(x, y);
+                        break;
+                    case "Gatherer":
+                        if (Location.isWellDefined(x, y)) new Gatherer(x, y, Direction.LEFT, true);
+                        break;
+                    case "Thief":
+                        if (Location.isWellDefined(x, y)) new Thief(x, y, Direction.UP, true);
+                        break;
+                    default:
+                        System.out.println("error: in file \"" + worldFile + "\" at line " + lineNumber);
+                        System.exit(FAILURE);
                 }
                 lineNumber++;
             }
