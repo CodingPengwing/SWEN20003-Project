@@ -47,6 +47,7 @@ public class Gatherer extends MobileActor {
         // Move right with existing Gatherer
         direction.rotateLeft();
         move();
+        setCarrying(false);
     }
 
     // Interacting with Sign

@@ -57,6 +57,8 @@ public class Thief extends MobileActor {
         // Move right with existing Thief
         direction.rotateRight();
         move();
+        setCarrying(false);
+        consuming = false;
     }
 
     // Interacting with Sign
