@@ -16,7 +16,8 @@ public class Thief extends MobileActor {
         else newMobileActors.add(this);
     }
 
-    // Tick logic for Thieves
+    @Override
+    // Tick logic for Thief's
     protected void tick() {
         if (!isActive()) return;
         move();
@@ -41,33 +42,16 @@ public class Thief extends MobileActor {
         }
     }
 
-    // Interacting with Fence
-    private void interactFence() {
-        setActive(false);
-        direction.rotateReverse();
-        move();
-    }
-
+    @Override
     // Interacting with Mitosis Pool
-    private void interactPool() {
-        // Create a new Thief and move left
-        Thief thief = new Thief(location.getX(), location.getY(), direction.getDirection(), false);
-        thief.direction.rotateLeft();
-        thief.move();
-        // Move right with existing Thief
-        direction.rotateRight();
-        move();
-        setCarrying(false);
+    protected void interactPool() {
+        super.interactPool();
         consuming = false;
     }
 
-    // Interacting with Sign
-    private void interactSign(Actor actor) {
-        direction.setDirection(((Sign) actor).getDirection());
-    }
-
+    @Override
     // Interacting with Pad
-    private void interactPad() {
+    protected void interactPad() {
         consuming = true;
     }
 
@@ -76,26 +60,9 @@ public class Thief extends MobileActor {
         direction.rotateLeft();
     }
 
-    // Interacting with Golden Tree
-    private void interactGoldenTree() {
-        if (!isCarrying()) {
-            setCarrying(true);
-        }
-    }
-
-    // Interacting with Tree
-    private void interactTree(Actor actor) {
-        if (!isCarrying()) {
-            FruitStorage tree = (FruitStorage) actor;
-            if (tree.getNumFruit() > 0) {
-                setCarrying(true);
-                tree.decreaseNumFruit();
-            }
-        }
-    }
-
+    @Override
     // Interacting with Hoard
-    private void interactHoard(Actor actor) {
+    protected void interactHoard(Actor actor) {
         Hoard hoard = (Hoard) actor;
         if (consuming) {
             consuming = false;
@@ -116,8 +83,9 @@ public class Thief extends MobileActor {
         }
     }
 
+    @Override
     // Interacting with Stockpile
-    private void interactStockpile(Actor actor) {
+    protected void interactStockpile(Actor actor) {
         Stockpile stockpile = (Stockpile) actor;
         if (!isCarrying()) {
             if (stockpile.getNumFruit() > 0) {

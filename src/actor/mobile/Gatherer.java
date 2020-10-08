@@ -14,7 +14,8 @@ public class Gatherer extends MobileActor {
         else newMobileActors.add(this);
     }
 
-    // Tick logic for Gatherers
+    @Override
+    // Tick logic for Gatherer's
     protected void tick() {
         if (!isActive()) return;
         move();
@@ -31,52 +32,32 @@ public class Gatherer extends MobileActor {
         }
     }
 
-    // Interacting with Fence
-    private void interactFence() {
-        setActive(false);
-        direction.rotateReverse();
-        move();
-    }
-
-    // Interacting with Mitosis Pool
-    private void interactPool() {
-        // Create a new Gatherer and move left
-        Gatherer g1 = new Gatherer(location.getX(), location.getY(), direction.getDirection(), false);
-        g1.direction.rotateRight();
-        g1.move();
-        // Move right with existing Gatherer
-        direction.rotateLeft();
-        move();
-        setCarrying(false);
-    }
-
-    // Interacting with Sign
-    private void interactSign(Actor actor) {
-        direction.setDirection(((Sign) actor).getDirection());
-    }
-
+    @Override
     // Interacting with Golden Tree
-    private void interactGoldenTree() {
-        if (!isCarrying()) {
-            setCarrying(true);
+    protected boolean interactGoldenTree() {
+        if (super.interactGoldenTree()) {
             direction.rotateReverse();
+            return true;
         }
+        return false;
     }
 
+    @Override
     // Interacting with Tree
-    private void interactTree(Actor actor) {
-        if (!isCarrying()) {
-            FruitStorage tree = (FruitStorage) actor;
-            if (tree.getNumFruit() > 0) {
-                setCarrying(true);
-                direction.rotateReverse();
-                tree.decreaseNumFruit();
-            }
+    protected boolean interactTree(Actor actor) {
+        if (super.interactTree(actor)) {
+            direction.rotateReverse();
+            return true;
         }
+        return false;
     }
 
+    @Override
+    protected void interactPad() {}
+
+    @Override
     // Interacting with Hoard
-    private void interactHoard(Actor actor) {
+    protected void interactHoard(Actor actor) {
         if (isCarrying()) {
             setCarrying(false);
             FruitStorage storage = (FruitStorage) actor;
@@ -85,8 +66,9 @@ public class Gatherer extends MobileActor {
         direction.rotateReverse();
     }
 
+    @Override
     // Interacting with Stockpile
-    private void interactStockpile(Actor actor) {
+    protected void interactStockpile(Actor actor) {
         interactHoard(actor);
     }
 }

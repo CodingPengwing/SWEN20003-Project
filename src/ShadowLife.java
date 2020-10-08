@@ -135,9 +135,11 @@ public class ShadowLife extends AbstractGame {
                         if (Location.isWellDefined(x, y)) new MitosisPool(x, y);
                         break;
                     case "Gatherer":
+                        // Initial Gatherer's have a default direction heading left
                         if (Location.isWellDefined(x, y)) new Gatherer(x, y, Direction.LEFT, true);
                         break;
                     case "Thief":
+                        // Initial Thief's have a default direction heading up
                         if (Location.isWellDefined(x, y)) new Thief(x, y, Direction.UP, true);
                         break;
                     default:
