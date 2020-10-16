@@ -1,28 +1,19 @@
 package actor.mobile;
 
 import actor.Actor;
-import actor.Sign;
-import actor.fruitstorage.FruitStorage;
+import actor.FruitStorage;
 import maplogic.*;
-import java.util.ArrayList;
 
 public abstract class MobileActor extends Actor {
+    private final int DEFAULT_DIRECTION = 0;
     private boolean active;
     private boolean carrying;
-    protected Direction direction;
+    private Direction direction = new Direction(DEFAULT_DIRECTION);
 
-    // To store all the Gatherer's and Thief's in the game
-    final protected static ArrayList<MobileActor> gatherers = new ArrayList<>();
-    final protected static ArrayList<MobileActor> thieves = new ArrayList<>();
-
-    // To store new MobileActor's created during game execution
-    final protected static ArrayList<MobileActor> newMobileActors = new ArrayList<>();
-
-    public MobileActor(double x, double y, String imagePath, int direction) {
-        super(x, y, imagePath);
+    public MobileActor(String type, double x, double y) {
+        super(type, x, y);
         active = true;
         carrying = false;
-        this.direction = new Direction(direction);
     }
 
     final protected boolean isActive() {
@@ -39,6 +30,10 @@ public abstract class MobileActor extends Actor {
 
     final protected void setCarrying(boolean carrying) {
         this.carrying = carrying;
+    }
+
+    final protected Direction getDirection() {
+        return direction;
     }
 
     // Moves the Actor one tile in the direction they are currently facing
@@ -74,10 +69,11 @@ public abstract class MobileActor extends Actor {
         // Create a new MobileActor and move left
         MobileActor newActor;
         if (this instanceof Gatherer) {
-            newActor = new Gatherer(location.getX(), location.getY(), direction.getDirection(), false);
+            newActor = new Gatherer(location.getX(), location.getY(), false);
         } else {
-            newActor = new Thief(location.getX(), location.getY(), direction.getDirection(), false);
+            newActor = new Thief(location.getX(), location.getY(), false);
         }
+        newActor.direction.setDirection(direction.getDirection());
         newActor.direction.rotateLeft();
         newActor.move();
         // Move right with existing MobileActor
@@ -88,8 +84,20 @@ public abstract class MobileActor extends Actor {
 
 
     // Interacting with Sign
-    protected void interactSign(Actor actor) {
-        direction.setDirection(((Sign) actor).getDirection());
+    protected void interactSignUp() {
+        direction.setDirection(Direction.UP);
+    }
+
+    protected void interactSignDown() {
+        direction.setDirection(Direction.DOWN);
+    }
+
+    protected void interactSignLeft() {
+        direction.setDirection(Direction.LEFT);
+    }
+
+    protected void interactSignRight() {
+        direction.setDirection(Direction.RIGHT);
     }
 
     // Interacting with Golden Tree
@@ -125,37 +133,22 @@ public abstract class MobileActor extends Actor {
 
     // Ticks every Actor in 'gatherers' and 'thieves' arrays
     public static void tickMobileActors() {
-        for (MobileActor actor : gatherers) actor.tick();
-        for (MobileActor actor : thieves) actor.tick();
-
-        // If new Actors have been created during the tick,
-        // add those Actors into their respective arrays
-        // and clear out the newMobileActors array
-        if (newMobileActors.size() > 0) {
-            for (MobileActor actor : newMobileActors) {
-                if (actor instanceof Gatherer) {
-                    gatherers.add(actor);
-                }
-                if (actor instanceof Thief) {
-                    thieves.add(actor);
-                }
-            }
-            newMobileActors.clear();
-        }
+        Gatherer.tickGatherers();
+        Thief.tickThieves();
     }
 
     // Renders every Actor in 'gatherers' and 'thieves' arrays
     public static void renderMobileActors() {
-        for (MobileActor actor : gatherers) actor.render();
-        for (MobileActor actor : thieves) actor.render();
+        for (Gatherer actor : Gatherer.gatherers) actor.render();
+        for (Thief actor : Thief.thieves) actor.render();
     }
 
     // Checks if there are still active Actors
     public static boolean actorsActive() {
-        for (MobileActor actor : gatherers) {
+        for (MobileActor actor : Gatherer.gatherers) {
             if (actor.active) return true;
         }
-        for (MobileActor actor : thieves) {
+        for (MobileActor actor : Thief.thieves) {
             if (actor.active) return true;
         }
         return false;

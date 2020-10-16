@@ -1,17 +1,26 @@
 package actor.mobile;
 
 import actor.*;
-import actor.fruitstorage.*;
+import maplogic.Direction;
+
+import java.util.ArrayList;
 
 public class Gatherer extends MobileActor {
+    // To store all the Gatherer's and Thief's in the game
+    final protected static ArrayList<Gatherer> gatherers = new ArrayList<>();
+    // To store new MobileActor's created during game execution
+    final protected static ArrayList<Gatherer> newGatherers = new ArrayList<>();
+
     // Constructor with default Gatherer image
-    public Gatherer(double x, double y, int direction, boolean initialActor)
-    {
-        super(x, y, "src/res/images/gatherer.png", direction);
+    public Gatherer(double x, double y, boolean initialActor) {
+        super(Actor.GATHERER, x, y);
         // If the Gatherer is initially defined at the start of the simulation
-        if (initialActor) gatherers.add(this);
+        if (initialActor) {
+            getDirection().setDirection(Direction.LEFT);
+            gatherers.add(this);
+        }
         // If the Gatherer is created on the fly during the simulation
-        else newMobileActors.add(this);
+        else newGatherers.add(this);
     }
 
     @Override
@@ -21,14 +30,43 @@ public class Gatherer extends MobileActor {
         move();
         for (Actor actor : Actor.stationaryActors) {
             if (actor.locationEquals(this)) {
-                if (actor instanceof Fence) { interactFence(); }
-                if (actor instanceof MitosisPool) { interactPool(); return; }
-                if (actor instanceof Sign) { interactSign(actor); }
-                if (actor instanceof GoldenTree) { interactGoldenTree(); }
-                if (actor instanceof Tree) { interactTree(actor); }
-                if (actor instanceof Hoard) { interactHoard(actor); }
-                if (actor instanceof Stockpile) { interactStockpile(actor); }
+                switch (actor.getType()) {
+                    case FENCE:
+                        interactFence(); break;
+                    case POOL:
+                        interactPool(); break;
+                    case SIGN_UP:
+                        interactSignUp(); break;
+                    case SIGN_DOWN:
+                        interactSignDown(); break;
+                    case SIGN_LEFT:
+                        interactSignLeft(); break;
+                    case SIGN_RIGHT:
+                        interactSignRight(); break;
+                    case TREE:
+                        interactTree(actor); break;
+                    case GOLDEN_TREE:
+                        interactGoldenTree(); break;
+                    case HOARD:
+                        interactHoard(actor); break;
+                    case STOCKPILE:
+                        interactStockpile(actor); break;
+                }
             }
+        }
+    }
+
+    protected static void tickGatherers() {
+        for (Gatherer gatherer : gatherers) gatherer.tick();
+
+        // If new Actors have been created during the tick,
+        // add those Actors into their respective arrays
+        // and clear out the newMobileActors array
+        if (newGatherers.size() > 0) {
+            for (Gatherer gatherer : newGatherers) {
+                gatherers.add(gatherer);
+            }
+            newGatherers.clear();
         }
     }
 
@@ -36,7 +74,7 @@ public class Gatherer extends MobileActor {
     // Interacting with Golden Tree
     protected boolean interactGoldenTree() {
         if (super.interactGoldenTree()) {
-            direction.rotateReverse();
+            getDirection().rotateReverse();
             return true;
         }
         return false;
@@ -46,7 +84,7 @@ public class Gatherer extends MobileActor {
     // Interacting with Tree
     protected boolean interactTree(Actor actor) {
         if (super.interactTree(actor)) {
-            direction.rotateReverse();
+            getDirection().rotateReverse();
             return true;
         }
         return false;
@@ -63,7 +101,7 @@ public class Gatherer extends MobileActor {
             FruitStorage storage = (FruitStorage) actor;
             storage.increaseNumFruit();
         }
-        direction.rotateReverse();
+        getDirection().rotateReverse();
     }
 
     @Override

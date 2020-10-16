@@ -1,19 +1,24 @@
 package actor.mobile;
 
 import actor.*;
-import actor.fruitstorage.*;
+
+import java.util.ArrayList;
 
 public class Thief extends MobileActor {
     private boolean consuming;
+    final protected static ArrayList<Thief> thieves = new ArrayList<>();
+
+    // To store new MobileActor's created during game execution
+    final protected static ArrayList<Thief> newThieves = new ArrayList<>();
 
     // Constructor with default Thief image
-    public Thief(double x, double y, int direction, boolean initialActor) {
-        super(x, y, "src/res/images/thief.png", direction);
+    public Thief(double x, double y, boolean initialActor) {
+        super(Actor.THIEF, x, y);
         consuming = false;
         // If the Thief is initially defined at the start of the simulation
         if (initialActor) thieves.add(this);
         // If the Thief is created on the fly during the simulation
-        else newMobileActors.add(this);
+        else newThieves.add(this);
     }
 
     @Override
@@ -23,22 +28,56 @@ public class Thief extends MobileActor {
         move();
         for (Actor actor : stationaryActors) {
             if (actor.locationEquals(this)) {
-                if (actor instanceof Fence) { interactFence(); }
-                if (actor instanceof MitosisPool) { interactPool(); return; }
-                if (actor instanceof Sign) { interactSign(actor); }
-                if (actor instanceof Pad) { interactPad(); }
+                switch (actor.getType()) {
+                    case FENCE:
+                        interactFence(); break;
+                    case POOL:
+                        interactPool(); break;
+                    case SIGN_UP:
+                        interactSignUp(); break;
+                    case SIGN_DOWN:
+                        interactSignDown(); break;
+                    case SIGN_LEFT:
+                        interactSignLeft(); break;
+                    case SIGN_RIGHT:
+                        interactSignRight(); break;
+                }
             }
         }
-        for (MobileActor gatherer : MobileActor.gatherers) {
+        for (Gatherer gatherer : Gatherer.gatherers) {
             if (gatherer.locationEquals(this)) { interactGatherer(); break; }
         }
         for (Actor actor : stationaryActors) {
             if (actor.locationEquals(this)) {
-                if (actor instanceof GoldenTree) { interactGoldenTree(); }
-                if (actor instanceof Tree) { interactTree(actor); }
-                if (actor instanceof Hoard) { interactHoard(actor); }
-                if (actor instanceof Stockpile) { interactStockpile(actor); }
+                switch (actor.getType()) {
+                    case TREE:
+                        interactTree(actor);
+                        break;
+                    case GOLDEN_TREE:
+                        interactGoldenTree();
+                        break;
+                    case HOARD:
+                        interactHoard(actor);
+                        break;
+                    case STOCKPILE:
+                        interactStockpile(actor);
+                        break;
+                }
             }
+        }
+    }
+
+    protected static void tickThieves() {
+        for (Thief thief : thieves) thief.tick();
+
+        // If new Actors have been created during the tick,
+        // add those Actors into their respective arrays
+        // and clear out the newMobileActors array
+        if (newThieves.size() > 0) {
+            for (Thief thief : newThieves) {
+                thieves.add(thief);
+            }
+            newThieves.clear();
         }
     }
 
@@ -57,13 +96,13 @@ public class Thief extends MobileActor {
 
     // Interacting with Gatherer
     private void interactGatherer() {
-        direction.rotateLeft();
+        getDirection().rotateLeft();
     }
 
     @Override
     // Interacting with Hoard
     protected void interactHoard(Actor actor) {
-        Hoard hoard = (Hoard) actor;
+        FruitStorage hoard = (FruitStorage) actor;
         if (consuming) {
             consuming = false;
             if (!isCarrying()) {
@@ -72,30 +111,30 @@ public class Thief extends MobileActor {
                     hoard.decreaseNumFruit();
                 }
                 else {
-                    direction.rotateRight();
+                    getDirection().rotateRight();
                 }
             }
         }
         else if (isCarrying()) {
             setCarrying(false);
             hoard.increaseNumFruit();
-            direction.rotateRight();
+            getDirection().rotateRight();
         }
     }
 
     @Override
     // Interacting with Stockpile
     protected void interactStockpile(Actor actor) {
-        Stockpile stockpile = (Stockpile) actor;
+        FruitStorage stockpile = (FruitStorage) actor;
         if (!isCarrying()) {
             if (stockpile.getNumFruit() > 0) {
                 setCarrying(true);
                 consuming = false;
                 stockpile.decreaseNumFruit();
-                direction.rotateRight();
+                getDirection().rotateRight();
             }
         }
-        else direction.rotateRight();
+        else getDirection().rotateRight();
     }
 }
 
