@@ -1,10 +1,10 @@
 import actor.*;
 import actor.mobile.*;
-import maplogic.*;
 import bagel.AbstractGame;
 import bagel.Image;
 import bagel.Input;
-
+import maplogic.Location;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -30,14 +30,13 @@ public class ShadowLife extends AbstractGame {
         super(GAME_WIDTH, GAME_HEIGHT, "Shadow Life");
         tickCount = 0;
         lastTick = System.currentTimeMillis();
+        getInput();
+        createSetting();
     }
 
     // Start of the program
     public static void main(String[] args) {
-        ShadowLife game = new ShadowLife();
-        getInput();
-        createSetting();
-        game.run();
+        new ShadowLife().run();
     }
 
     // Renders the game constantly, provides the game with updates every tick
@@ -55,11 +54,10 @@ public class ShadowLife extends AbstractGame {
 
         // Check if the game has ended
         if (!MobileActor.actorsActive()) {
-            stopGame();
+            stopGame(SUCCESS);
         }
-        if (tickCount > maxTicks) {
-            System.out.println("Timed out");
-            System.exit(FAILURE);
+        if (tickCount >= maxTicks) {
+            stopGame(FAILURE);
         }
     }
 
@@ -69,72 +67,57 @@ public class ShadowLife extends AbstractGame {
         final int TYPE_POS = 0;
         final int X_POS = 1;
         final int Y_POS = 2;
-        int lineNumber = 1;
+        int lineNumber = 0;
 
         try (Scanner scanner = new Scanner(new FileReader(worldFile))) {
             while (scanner.hasNextLine()) {
+                lineNumber++;
                 String[] input = scanner.nextLine().split(",");
+                String type_str;
+                double x;
+                double y;
+                ActorType type;
 
-                // Error checking the input
-                if (input.length != EXPECTED_INPUTS) {
-                    System.out.println("error: in file \"" + worldFile + "\" at line " + lineNumber);
-                    System.exit(FAILURE);
-                }
-
-                //
-                for (char c : (input[X_POS]+input[Y_POS]).toCharArray()) {
-                    if (!Character.isDigit(c)) {
-                        System.out.println("error: in file \"" + worldFile + "\" at line " + lineNumber);
-                        System.exit(FAILURE);
-                    }
-                }
-
-                // After splitting, the first value should be the type of Actor,
-                // the second and third values should be the x and y coordinates.
-                String type = input[TYPE_POS];
-                double x = Double.parseDouble(input[X_POS]);
-                double y = Double.parseDouble(input[Y_POS]);
-
-                System.out.println("MAKING TYPE "  + type);
-                // Create the Actor instance.
                 // Check whether the Actor type given is valid.
-                switch (type) {
+                if (input.length > EXPECTED_INPUTS) {
+                    throw new InvalidInputException(worldFile, lineNumber);
+                }
 
-                    // Location is checked after type checking to detect undefined types first
-                    case Actor.GOLDEN_TREE:
-                    case Actor.PAD:
-                    case Actor.FENCE:
-                    case Actor.SIGN_UP:
-                    case Actor.SIGN_DOWN:
-                    case Actor.SIGN_LEFT:
-                    case Actor.SIGN_RIGHT:
-                    case Actor.POOL:
-                        if (Location.isWellDefined(x, y)) new Actor(type, x, y);
+                // After splitting, the first value should be the type of Actor, the second
+                // and third values should be the x and y coordinates in integer form.
+                try {
+                    type_str = input[TYPE_POS].toUpperCase();
+                    x = Integer.parseInt(input[X_POS]);
+                    y = Integer.parseInt(input[Y_POS]);
+                    type = ActorType.valueOf(type_str.toUpperCase());
+                }
+                catch (Exception e) {
+                    throw new InvalidInputException(worldFile, lineNumber);
+                }
+
+                // Create the Actor instance.
+                switch (type) {
+                    case TREE:
+                    case STOCKPILE:
+                    case HOARD:
+                        if (Location.isDefinedTile(x, y)) new FruitStorage(type, x, y);
                         break;
-                    case Actor.TREE:
-                    case Actor.STOCKPILE:
-                    case Actor.HOARD:
-                        if (Location.isWellDefined(x, y)) new FruitStorage(type, x, y);
+                    case GATHERER:
+                        if (Location.isDefinedTile(x, y)) new Gatherer(x, y, true);
                         break;
-                    case Actor.GATHERER:
-                        // Initial Gatherer's have a default direction heading left
-                        if (Location.isWellDefined(x, y)) new Gatherer(x, y, true);
-                        break;
-                    case Actor.THIEF:
-                        // Initial Thief's have a default direction heading up
-                        if (Location.isWellDefined(x, y)) new Thief(x, y, true);
+                    case THIEF:
+                        if (Location.isDefinedTile(x, y)) new Thief(x, y, true);
                         break;
                     default:
-                        System.out.println("error: in file \"" + worldFile + "\" at line " + lineNumber);
-                        System.exit(FAILURE);
+                        new Actor(type, x, y);
                 }
-                lineNumber++;
             }
         }
-        catch (Exception e) {
-            System.out.println("error: file \"" + worldFile + "\" not found");
-            System.exit(FAILURE);
-            e.printStackTrace();
+        catch (FileNotFoundException e) {
+            new InvalidInputException(worldFile).handler();
+        }
+        catch (InvalidInputException e) {
+            e.handler();
         }
     }
 
@@ -151,10 +134,16 @@ public class ShadowLife extends AbstractGame {
     }
 
     // Stops the game and provides output to stdout
-    private void stopGame() {
-        System.out.println(tickCount + " ticks");
-        FruitStorage.tallyHoardsAndStockpiles();
-        System.exit(SUCCESS);
+    private void stopGame(int exitStatus) {
+        if (exitStatus == SUCCESS) {
+            System.out.println(tickCount + " ticks");
+            FruitStorage.tallyHoardsAndStockpiles();
+            System.exit(SUCCESS);
+        }
+        else {
+            System.out.println("Timed out");
+            System.exit(FAILURE);
+        }
     }
 
     // Gets input from stdin
@@ -168,21 +157,17 @@ public class ShadowLife extends AbstractGame {
 
         // Check number of inputs
         if (inputs.length != EXPECTED_INPUTS) {
-            System.out.println("usage: ShadowLife <tick rate> <max ticks> <world file>");
-            System.exit(FAILURE);
+            new InvalidInputException().handler();
         }
 
-        // Check for non integer input
-        for (char c : (inputs[TICKRATE_POS]+inputs[MAXTICKS_POS]).toCharArray()) {
-            if (!Character.isDigit(c)) {
-                System.out.println("usage: ShadowLife <tick rate> <max ticks> <world file>");
-                System.exit(FAILURE);
-            }
+        try {
+            tickRate = Integer.parseInt(inputs[TICKRATE_POS]);
+            maxTicks = Integer.parseInt(inputs[MAXTICKS_POS]);
+            worldFile = inputs[WORLDFILE_POS];
         }
-
-        tickRate = Integer.parseInt(inputs[TICKRATE_POS]);
-        maxTicks = Integer.parseInt(inputs[MAXTICKS_POS]);
-        worldFile = inputs[WORLDFILE_POS];
+        catch (Exception e) {
+            new InvalidInputException().handler();
+        }
     }
 
     private static String[] argsFromFile() {

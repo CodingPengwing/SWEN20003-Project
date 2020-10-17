@@ -1,64 +1,50 @@
 package actor;
 
-import actor.mobile.MobileActor;
-import exceptions.InvalidActorTypeException;
-import maplogic.Direction;
 import maplogic.Location;
 import bagel.Image;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-//enum ActorType {
-//    TREE,
-//    GOLDEN_TREE,
-//    STOCKPILE,
-//    HOARD,
-//    PAD,
-//    FENCE,
-//    SIGN_UP,
-//    SIGN_DOWN,
-//    SIGN_LEFT,
-//    SIGN_RIGHT,
-//    POOL,
-//    GATHERER,
-//    THIEF
-//}
-
 public class Actor {
-    final public static String TREE = "Tree";
-    final public static String GOLDEN_TREE = "GoldenTree";
-    final public static String STOCKPILE = "Stockpile";
-    final public static String HOARD = "Hoard";
-    final public static String PAD = "Pad";
-    final public static String FENCE = "Fence";
-    final public static String SIGN_UP = "SignUp";
-    final public static String SIGN_DOWN = "SignDown";
-    final public static String SIGN_LEFT = "SignLeft";
-    final public static String SIGN_RIGHT = "SignRight";
-    final public static String POOL = "Pool";
-    final public static String GATHERER = "Gatherer";
-    final public static String THIEF = "Thief";
+//    final public static String TREE = "Tree";
+//    final public static String GOLDEN_TREE = "GoldenTree";
+//    final public static String STOCKPILE = "Stockpile";
+//    final public static String HOARD = "Hoard";
+//    final public static String PAD = "Pad";
+//    final public static String FENCE = "Fence";
+//    final public static String SIGN_UP = "SignUp";
+//    final public static String SIGN_DOWN = "SignDown";
+//    final public static String SIGN_LEFT = "SignLeft";
+//    final public static String SIGN_RIGHT = "SignRight";
+//    final public static String POOL = "Pool";
+//    final public static String GATHERER = "Gatherer";
+//    final public static String THIEF = "Thief";
+//    // All the types that will be accepted
+//    final private static ArrayList<String> definedTypes = new ArrayList<>(Arrays.asList(TREE, GOLDEN_TREE, STOCKPILE,
+//            HOARD, PAD, FENCE, SIGN_UP, SIGN_DOWN, SIGN_LEFT, SIGN_RIGHT, POOL, GATHERER, THIEF));
+
 
     private Image image;
-    private String type;
+    private ActorType type;
     final protected Location location;
-
     // To store the current Actors in the game that don't move
     final protected static ArrayList<Actor> stationaryActors = new ArrayList<>();
 
-    public Actor(String type, double x, double y) {
-//        if (!isDefinedType(type)) {
-//            throw new InvalidActorTypeException(type);
-//        }
+
+    public Actor(ActorType type, double x, double y) {
         this.location = new Location(x, y);
         this.type = type;
         setImage(type);
-        if (!type.equals(GATHERER) && !type.equals(THIEF)) {
-            stationaryActors.add(this);
+        switch (type) {
+            case GATHERER:
+            case THIEF:
+                break;
+            default:
+                stationaryActors.add(this);
         }
     }
 
-    public String getType() {
+    public ActorType getType() {
         return type;
     }
 
@@ -78,21 +64,17 @@ public class Actor {
         for (Actor actor : stationaryActors) actor.render();
     }
 
-    public static boolean isDefinedType(String type) {
-        // All the types that will be accepted
-        ArrayList<String> definedTypes = new ArrayList<>(Arrays.asList(TREE, GOLDEN_TREE, STOCKPILE,
-                HOARD, PAD, FENCE, SIGN_UP, SIGN_DOWN, SIGN_LEFT, SIGN_RIGHT, POOL, GATHERER, THIEF));
+//    public static boolean isDefinedType(String type) {
+//        if (definedTypes.contains(type)) return true;
+//        return false;
+//    }
 
-        if (definedTypes.contains(type)) return true;
-        return false;
-    }
-
-    private void setImage(String type) {
+    private void setImage(ActorType type) {
         switch (type) {
             case TREE:
                 image = new Image("src/res/images/tree.png");
                 break;
-            case GOLDEN_TREE:
+            case GOLDENTREE:
                 image = new Image("src/res/images/gold-tree.png");
                 break;
             case STOCKPILE:
@@ -107,16 +89,16 @@ public class Actor {
             case FENCE:
                 image = new Image("src/res/images/fence.png");
                 break;
-            case SIGN_UP:
+            case SIGNUP:
                 image = new Image("src/res/images/up.png");
                 break;
-            case SIGN_DOWN:
+            case SIGNDOWN:
                 image = new Image("src/res/images/down.png");
                 break;
-            case SIGN_LEFT:
+            case SIGNLEFT:
                 image = new Image("src/res/images/left.png");
                 break;
-            case SIGN_RIGHT:
+            case SIGNRIGHT:
                 image = new Image("src/res/images/right.png");
                 break;
             case POOL:

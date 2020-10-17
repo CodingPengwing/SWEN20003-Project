@@ -23,14 +23,13 @@ public class Direction {
     }
 
     public void setDirection(int direction) {
-        if (direction % ANGLE_90 != 0) {
-            System.err.println("Cannot set direction to value: " + direction);
-            System.exit(-1);
+        if (direction % ANGLE_90 == 0) {
+            // Keep the direction within the 0-270 range
+            direction %= ANGLE_360;
+            if (direction < 0) direction += ANGLE_360;
+            this.direction = direction;
         }
-        // Keep the direction within the 0-270 range
-        direction %= ANGLE_360;
-        if (direction < 0) direction += ANGLE_360;
-        this.direction = direction;
+        else System.err.println("Cannot set direction to value: " + direction);
     }
 
     // Turns the direction 90 degrees anticlockwise

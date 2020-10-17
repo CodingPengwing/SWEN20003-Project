@@ -1,19 +1,21 @@
 package actor.mobile;
 
 import actor.Actor;
+import actor.ActorType;
 import actor.FruitStorage;
 import maplogic.*;
 
 public abstract class MobileActor extends Actor {
-    private final int DEFAULT_DIRECTION = 0;
+    private final int DEFAULT_DIRECTION = Direction.UP;
     private boolean active;
     private boolean carrying;
-    private Direction direction = new Direction(DEFAULT_DIRECTION);
+    private Direction direction;
 
-    public MobileActor(String type, double x, double y) {
+    public MobileActor(ActorType type, double x, double y) {
         super(type, x, y);
         active = true;
         carrying = false;
+        direction = new Direction(DEFAULT_DIRECTION);
     }
 
     final protected boolean isActive() {
@@ -55,7 +57,18 @@ public abstract class MobileActor extends Actor {
     }
 
     // Every child must implement their own tick method
-    protected abstract void tick();
+    abstract protected void tick();
+
+    // Interacting with Pad
+    abstract protected void interactPad();
+
+    // Interacting with Hoard
+    abstract protected void interactHoard(Actor actor);
+
+    // Interacting with Stockpile
+    abstract protected void interactStockpile(Actor actor);
+
+    protected void interactGatherer() {}
 
     // Interacting with Fence
     protected void interactFence() {
@@ -68,11 +81,14 @@ public abstract class MobileActor extends Actor {
     protected void interactPool() {
         // Create a new MobileActor and move left
         MobileActor newActor;
-        if (this instanceof Gatherer) {
-            newActor = new Gatherer(location.getX(), location.getY(), false);
-        } else {
-            newActor = new Thief(location.getX(), location.getY(), false);
+        switch (this.getType()) {
+            case GATHERER:
+                newActor = new Gatherer(location.getX(), location.getY(), false);
+                break;
+            default:
+                newActor = new Thief(location.getX(), location.getY(), false);
         }
+
         newActor.direction.setDirection(direction.getDirection());
         newActor.direction.rotateLeft();
         newActor.move();
@@ -121,15 +137,6 @@ public abstract class MobileActor extends Actor {
         }
         return false;
     }
-
-    // Interacting with Pad
-    protected abstract void interactPad();
-
-    // Interacting with Hoard
-    protected abstract void interactHoard(Actor actor);
-
-    // Interacting with Stockpile
-    protected abstract void interactStockpile(Actor actor);
 
     // Ticks every Actor in 'gatherers' and 'thieves' arrays
     public static void tickMobileActors() {

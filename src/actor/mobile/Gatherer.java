@@ -13,7 +13,7 @@ public class Gatherer extends MobileActor {
 
     // Constructor with default Gatherer image
     public Gatherer(double x, double y, boolean initialActor) {
-        super(Actor.GATHERER, x, y);
+        super(ActorType.GATHERER, x, y);
         // If the Gatherer is initially defined at the start of the simulation
         if (initialActor) {
             getDirection().setDirection(Direction.LEFT);
@@ -35,17 +35,17 @@ public class Gatherer extends MobileActor {
                         interactFence(); break;
                     case POOL:
                         interactPool(); break;
-                    case SIGN_UP:
+                    case SIGNUP:
                         interactSignUp(); break;
-                    case SIGN_DOWN:
+                    case SIGNDOWN:
                         interactSignDown(); break;
-                    case SIGN_LEFT:
+                    case SIGNLEFT:
                         interactSignLeft(); break;
-                    case SIGN_RIGHT:
+                    case SIGNRIGHT:
                         interactSignRight(); break;
                     case TREE:
                         interactTree(actor); break;
-                    case GOLDEN_TREE:
+                    case GOLDENTREE:
                         interactGoldenTree(); break;
                     case HOARD:
                         interactHoard(actor); break;

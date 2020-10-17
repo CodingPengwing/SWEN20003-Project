@@ -13,7 +13,7 @@ public class Thief extends MobileActor {
 
     // Constructor with default Thief image
     public Thief(double x, double y, boolean initialActor) {
-        super(Actor.THIEF, x, y);
+        super(ActorType.THIEF, x, y);
         consuming = false;
         // If the Thief is initially defined at the start of the simulation
         if (initialActor) thieves.add(this);
@@ -33,19 +33,23 @@ public class Thief extends MobileActor {
                         interactFence(); break;
                     case POOL:
                         interactPool(); break;
-                    case SIGN_UP:
+                    case SIGNUP:
                         interactSignUp(); break;
-                    case SIGN_DOWN:
+                    case SIGNDOWN:
                         interactSignDown(); break;
-                    case SIGN_LEFT:
+                    case SIGNLEFT:
                         interactSignLeft(); break;
-                    case SIGN_RIGHT:
+                    case SIGNRIGHT:
                         interactSignRight(); break;
+                    case PAD:
+                        interactPad(); break;
                 }
             }
         }
         for (Gatherer gatherer : Gatherer.gatherers) {
-            if (gatherer.locationEquals(this)) { interactGatherer(); break; }
+            if (gatherer.locationEquals(this)) {
+                interactGatherer(); break;
+            }
         }
         for (Actor actor : stationaryActors) {
             if (actor.locationEquals(this)) {
@@ -53,7 +57,7 @@ public class Thief extends MobileActor {
                     case TREE:
                         interactTree(actor);
                         break;
-                    case GOLDEN_TREE:
+                    case GOLDENTREE:
                         interactGoldenTree();
                         break;
                     case HOARD:
@@ -94,8 +98,9 @@ public class Thief extends MobileActor {
         consuming = true;
     }
 
+    @Override
     // Interacting with Gatherer
-    private void interactGatherer() {
+    protected void interactGatherer() {
         getDirection().rotateLeft();
     }
 
