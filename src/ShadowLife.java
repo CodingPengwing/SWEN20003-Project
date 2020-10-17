@@ -56,7 +56,7 @@ public class ShadowLife extends AbstractGame {
         if (!MobileActor.actorsActive()) {
             stopGame(SUCCESS);
         }
-        if (tickCount >= maxTicks) {
+        if (tickCount > maxTicks) {
             stopGame(FAILURE);
         }
     }
@@ -85,15 +85,10 @@ public class ShadowLife extends AbstractGame {
 
                 // After splitting, the first value should be the type of Actor, the second
                 // and third values should be the x and y coordinates in integer form.
-                try {
-                    type_str = input[TYPE_POS].toUpperCase();
-                    x = Integer.parseInt(input[X_POS]);
-                    y = Integer.parseInt(input[Y_POS]);
-                    type = ActorType.valueOf(type_str.toUpperCase());
-                }
-                catch (Exception e) {
-                    throw new InvalidInputException(worldFile, lineNumber);
-                }
+                type_str = input[TYPE_POS];
+                type = ActorType.valueOf(type_str.toUpperCase());
+                x = Integer.parseInt(input[X_POS]);
+                y = Integer.parseInt(input[Y_POS]);
 
                 // Create the Actor instance.
                 switch (type) {
@@ -118,6 +113,12 @@ public class ShadowLife extends AbstractGame {
         }
         catch (InvalidInputException e) {
             e.handler();
+        }
+        catch (NumberFormatException e) {
+            new InvalidInputException(worldFile, lineNumber).handler();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

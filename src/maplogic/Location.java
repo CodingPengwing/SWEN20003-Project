@@ -40,7 +40,7 @@ public class Location {
 
     // Checks whether the given location is well-defined inside a tile
     public static boolean isDefinedTile(double x, double y) {
-        if (x % TILE_SIZE == 0 && y % TILE_SIZE == 0) {
+        if ((x % TILE_SIZE == 0) && (y % TILE_SIZE == 0)) {
             return true;
         }
         return false;

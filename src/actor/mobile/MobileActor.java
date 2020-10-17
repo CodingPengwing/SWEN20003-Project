@@ -42,16 +42,16 @@ public abstract class MobileActor extends Actor {
     final protected void move() {
         switch (direction.getDirection()) {
             case Direction.UP:
-                location.moveUp();
+                moveUp();
                 break;
             case Direction.RIGHT:
-                location.moveRight();
+                moveRight();
                 break;
             case Direction.DOWN:
-                location.moveDown();
+                moveDown();
                 break;
             case Direction.LEFT:
-                location.moveLeft();
+                moveLeft();
                 break;
         }
     }
@@ -81,12 +81,12 @@ public abstract class MobileActor extends Actor {
     protected void interactPool() {
         // Create a new MobileActor and move left
         MobileActor newActor;
-        switch (this.getType()) {
+        switch (getType()) {
             case GATHERER:
-                newActor = new Gatherer(location.getX(), location.getY(), false);
+                newActor = new Gatherer(getX(), getY(), false);
                 break;
             default:
-                newActor = new Thief(location.getX(), location.getY(), false);
+                newActor = new Thief(getX(), getY(), false);
         }
 
         newActor.direction.setDirection(direction.getDirection());

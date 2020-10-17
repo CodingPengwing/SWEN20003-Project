@@ -3,33 +3,14 @@ package actor;
 import maplogic.Location;
 import bagel.Image;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Actor {
-//    final public static String TREE = "Tree";
-//    final public static String GOLDEN_TREE = "GoldenTree";
-//    final public static String STOCKPILE = "Stockpile";
-//    final public static String HOARD = "Hoard";
-//    final public static String PAD = "Pad";
-//    final public static String FENCE = "Fence";
-//    final public static String SIGN_UP = "SignUp";
-//    final public static String SIGN_DOWN = "SignDown";
-//    final public static String SIGN_LEFT = "SignLeft";
-//    final public static String SIGN_RIGHT = "SignRight";
-//    final public static String POOL = "Pool";
-//    final public static String GATHERER = "Gatherer";
-//    final public static String THIEF = "Thief";
-//    // All the types that will be accepted
-//    final private static ArrayList<String> definedTypes = new ArrayList<>(Arrays.asList(TREE, GOLDEN_TREE, STOCKPILE,
-//            HOARD, PAD, FENCE, SIGN_UP, SIGN_DOWN, SIGN_LEFT, SIGN_RIGHT, POOL, GATHERER, THIEF));
-
-
     private Image image;
-    private ActorType type;
-    final protected Location location;
-    // To store the current Actors in the game that don't move
-    final protected static ArrayList<Actor> stationaryActors = new ArrayList<>();
+    final private ActorType type;
+    final private Location location;
 
+    // To store the current Actors in the game that don't move
+    final private static ArrayList<Actor> stationaryActors = new ArrayList<>();
 
     public Actor(ActorType type, double x, double y) {
         this.location = new Location(x, y);
@@ -48,15 +29,20 @@ public class Actor {
         return type;
     }
 
-    // Draws the image of the Actor at their location
-    protected void render() {
-        image.drawFromTopLeft(location.getX(), location.getY());
-    }
-
     // Determines if 2 Actors are in the same location
     final public boolean locationEquals(Actor actor) {
         if (location.equals(actor.location)) return true;
         return false;
+    }
+
+    public static ArrayList<Actor> getStationaryActorsAtLocation(double x, double y) {
+        ArrayList<Actor> output = new ArrayList<>();
+        for (Actor actor : stationaryActors) {
+            if (actor.getX() == x && actor.getY() == y) {
+                output.add(actor);
+            }
+        }
+        return output;
     }
 
     // Renders all Actors in the stationaryActors array
@@ -64,11 +50,29 @@ public class Actor {
         for (Actor actor : stationaryActors) actor.render();
     }
 
-//    public static boolean isDefinedType(String type) {
-//        if (definedTypes.contains(type)) return true;
-//        return false;
-//    }
+    // Draws the image of the Actor at their location
+    protected void render() {
+        image.drawFromTopLeft(location.getX(), location.getY());
+    }
 
+    final protected double getX() { return location.getX(); }
+    final protected double getY() { return location.getY(); }
+    final protected void moveUp() { location.moveUp(); }
+    final protected void moveDown() { location.moveDown(); }
+    final protected void moveLeft() { location.moveLeft(); }
+    final protected void moveRight() { location.moveRight(); }
+
+    protected static ArrayList<Actor> getStationaryActorsOfTypes(ActorType... types) {
+        ArrayList<Actor> output = new ArrayList<>();
+        for (Actor actor : stationaryActors) {
+            for (ActorType type : types) {
+                if (actor.type.equals(type)) output.add(actor);
+            }
+        }
+        return output;
+    }
+
+    // Sets the image for the Actor based on its type
     private void setImage(ActorType type) {
         switch (type) {
             case TREE:

@@ -28,30 +28,28 @@ public class Gatherer extends MobileActor {
     protected void tick() {
         if (!isActive()) return;
         move();
-        for (Actor actor : Actor.stationaryActors) {
-            if (actor.locationEquals(this)) {
-                switch (actor.getType()) {
-                    case FENCE:
-                        interactFence(); break;
-                    case POOL:
-                        interactPool(); break;
-                    case SIGNUP:
-                        interactSignUp(); break;
-                    case SIGNDOWN:
-                        interactSignDown(); break;
-                    case SIGNLEFT:
-                        interactSignLeft(); break;
-                    case SIGNRIGHT:
-                        interactSignRight(); break;
-                    case TREE:
-                        interactTree(actor); break;
-                    case GOLDENTREE:
-                        interactGoldenTree(); break;
-                    case HOARD:
-                        interactHoard(actor); break;
-                    case STOCKPILE:
-                        interactStockpile(actor); break;
-                }
+        for (Actor actor : getStationaryActorsAtLocation(getX(), getY())) {
+            switch (actor.getType()) {
+                case FENCE:
+                    interactFence(); break;
+                case POOL:
+                    interactPool(); break;
+                case SIGNUP:
+                    interactSignUp(); break;
+                case SIGNDOWN:
+                    interactSignDown(); break;
+                case SIGNLEFT:
+                    interactSignLeft(); break;
+                case SIGNRIGHT:
+                    interactSignRight(); break;
+                case TREE:
+                    interactTree(actor); break;
+                case GOLDENTREE:
+                    interactGoldenTree(); break;
+                case HOARD:
+                    interactHoard(actor); break;
+                case STOCKPILE:
+                    interactStockpile(actor); break;
             }
         }
     }
