@@ -76,7 +76,7 @@ public abstract class MovableActor extends Actor {
     }
 
     // Tick logic for all MovableActors.
-    void tick() {
+    final void tick() {
         if (!active) return;
         move();
 

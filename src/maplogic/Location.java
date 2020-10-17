@@ -5,8 +5,9 @@ package maplogic;
  */
 public class Location {
     // This is the preset tile size for the game, the movement mechanism depends on this.
-    final static private int TILE_SIZE = 64;
+    private final static int TILE_SIZE = 64;
 
+    // x and y coordinates on the map
     private double x;
     private double y;
 

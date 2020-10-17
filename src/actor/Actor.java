@@ -9,17 +9,16 @@ import java.util.ArrayList;
  * classes inherit from this class either directly or through another child.
  */
 public class Actor {
-    private Image image;
-    final private ActorType type;
-
     // Location is made protected so that MovableActor can implement movement
     // logic inside the 'movable' package. It is declared final to restrict
-    // mutability in the current package. Movement logic should not be implemented
+    // mutability in the current package. Movement logic should NOT be implemented
     // anywhere outside the 'moveable' package.
-    final protected Location location;
+    protected final Location location;
+    private Image image;
+    private final ActorType type;
 
     // To store the current Actors in the game that don't move
-    final private static ArrayList<Actor> stationaryActors = new ArrayList<>();
+    private final static ArrayList<Actor> stationaryActors = new ArrayList<>();
 
     /** Constructs an Actor when given a type and a location on the map.
      * Upon creation, the image of the Actor will be set according to the
@@ -50,7 +49,7 @@ public class Actor {
     /** Returns the type of the Actor
      * @return instance of ActorType enum
      */
-    public ActorType getType() {
+    public final ActorType getType() {
         return type;
     }
 
@@ -58,7 +57,7 @@ public class Actor {
      * @param other The other Actor that is being compared to this one.
      * @return true if both Actors are in the same tile. false otherwise.
      */
-    final public boolean locationEquals(Actor other) {
+    public final boolean locationEquals(Actor other) {
         if (location.equals(other.location)) return true;
         return false;
     }
@@ -78,8 +77,7 @@ public class Actor {
         return output;
     }
 
-    /** Renders all stationary Actors onto the screen.
-     */
+    /** Renders all stationary Actors onto the screen. */
     public static void renderStationaryActors() {
         for (Actor actor : stationaryActors) actor.render();
     }
@@ -90,9 +88,9 @@ public class Actor {
     }
 
     // Returns the x coordinate of the Actor
-    final protected double getX() { return location.getX(); }
+    protected final double getX() { return location.getX(); }
     // Returns the y coordinate of the Actor
-    final protected double getY() { return location.getY(); }
+    protected final double getY() { return location.getY(); }
 
     // Returns all the Actors of the specified types given in the arguments.
     // To maintain the immutability of the 'stationaryActors' array, a partial

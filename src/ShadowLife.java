@@ -23,16 +23,16 @@ import java.util.Scanner;
  */
 public class ShadowLife extends AbstractGame {
     // Exit statuses for the program
-    private static final int SUCCESS = 0;
-    private static final int FAILURE = -1;
+    private final static int SUCCESS = 0;
+    private final static int FAILURE = -1;
 
     // Default game dimensions
-    private static final int GAME_HEIGHT = 768;
-    private static final int GAME_WIDTH = 1024;
+    private final static int GAME_HEIGHT = 768;
+    private final static int GAME_WIDTH = 1024;
 
     // Background rendering position
-    private static final int BACKGROUND_X = 0;
-    private static final int BACKGROUND_Y = 0;
+    private final static int BACKGROUND_X = 0;
+    private final static int BACKGROUND_Y = 0;
 
     // Tick (time) management for the game
     private static int tickRate;
@@ -139,15 +139,15 @@ public class ShadowLife extends AbstractGame {
                     throw new InvalidInputException(worldFile, lineNumber);
                 }
 
-                // After splitting, the first value should be the type of Actor, the second
-                // and third values should be the x and y coordinates in integer form. This
-                // will throw an error if x and y are not valid integers.
+                // After splitting, the first value should be the type of Actor, the
+                // second and third values should be the x and y coordinates in integer
+                // form. This will throw an error if x and y are not valid integers.
                 String typeString = input[TYPE_POS];
                 double x = Integer.parseInt(input[X_POS]);
                 double y = Integer.parseInt(input[Y_POS]);
 
-                // Convert String into ActorType variable, this will throw an error if
-                // the actor type is undefined.
+                // Convert String into ActorType variable, this will throw an error
+                // if the actor type is undefined.
                 ActorType actorType = ActorType.valueOf(typeString.toUpperCase());
 
                 // Check whether the location given is well-defined.
@@ -174,23 +174,16 @@ public class ShadowLife extends AbstractGame {
             }
         }
         // This error is thrown when the world file cannot be found.
-        catch (FileNotFoundException e) {
-            new InvalidInputException(worldFile).handler();
-        }
-        // In this block, this error is thrown when the input given in a line
-        // is not well-defined.
-        catch (InvalidInputException e) {
-            e.handler();
-        }
-        // In this block, this error is thrown when the input given in a line
-        // is not well-defined.
+        catch (FileNotFoundException e) { new InvalidInputException(worldFile).handler(); }
+        // In this block, InvalidInputException is thrown when the input given in a line is
+        // not well-defined.
+        catch (InvalidInputException e) { e.handler(); }
+        // In this block, NumberFormatException is thrown when the input given in a line is
+        // not well-defined.
         catch (NumberFormatException e) {
-            new InvalidInputException(worldFile, lineNumber).handler();
-        }
+            new InvalidInputException(worldFile, lineNumber).handler(); }
         // This is in case any other Exceptions come up.
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        catch (Exception e) { e.printStackTrace(); }
     }
 
     // Gets input from stdin and ensures that it is in the correct format.
@@ -199,33 +192,25 @@ public class ShadowLife extends AbstractGame {
         final int TICKRATE_POS = 0;
         final int MAXTICKS_POS = 1;
         final int WORLDFILE_POS = 2;
-
         // The arguments taken from 'args.txt' file, currently pretended to be command line.
         String inputs[] = argsFromFile();
-
         // Check number of inputs
-        if (inputs.length != EXPECTED_INPUTS) {
-            new InvalidInputException().handler();
-        }
-
+        if (inputs.length != EXPECTED_INPUTS) { new InvalidInputException().handler(); }
         // Assign inputs
         try {
             tickRate = Integer.parseInt(inputs[TICKRATE_POS]);
             maxTicks = Integer.parseInt(inputs[MAXTICKS_POS]);
             worldFile = inputs[WORLDFILE_POS];
         }
-        catch (Exception e) {
-            new InvalidInputException().handler();
-        }
+        catch (Exception e) { new InvalidInputException().handler(); }
     }
 
     // Gets the arguments provided in 'args.txt' file, currently pretended to be command line.
     private static String[] argsFromFile() {
         try {
             return Files.readString(Path.of("args.txt"), Charset.defaultCharset()).split(" ");
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        catch (IOException e) { e.printStackTrace(); }
         return null;
     }
 }

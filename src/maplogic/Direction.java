@@ -7,18 +7,18 @@ package maplogic;
  */
 public class Direction {
     /** The preset UP direction (can be thought of as North). */
-    public static final int UP = 0;
+    public final static int UP = 0;
     /** The preset RIGHT direction (can be thought of as East). */
-    public static final int RIGHT = 90;
+    public final static int RIGHT = 90;
     /** The preset DOWN direction (can be thought of as SOUTH). */
-    public static final int DOWN = 180;
+    public final static int DOWN = 180;
     /** The preset LEFT direction (can be thought of as WEST). */
-    public static final int LEFT = 270;
+    public final static int LEFT = 270;
 
     // Angles used in calculations to determine a new direction.
-    private static final int ANGLE_90 = 90;
-    private static final int ANGLE_180 = 180;
-    private static final int ANGLE_360 = 360;
+    private final static int ANGLE_90 = 90;
+    private final static int ANGLE_180 = 180;
+    private final static int ANGLE_360 = 360;
 
     private int degree;
 

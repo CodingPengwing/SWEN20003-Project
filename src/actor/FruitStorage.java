@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class FruitStorage extends Actor {
     // Default font and font size for rendering the fruit number
     private final static int FRUIT_FONT_SIZE = 25;
-    private final static Font FRUIT_FONT = new Font("src/res/VeraMono.ttf", FRUIT_FONT_SIZE);
+    private final static Font fruitFont = new Font("src/res/VeraMono.ttf", FRUIT_FONT_SIZE);
 
     // Default fruit count for Actors
     private final static int TREE_DEFAULT_NUM_FRUIT = 3;
@@ -74,6 +74,6 @@ public class FruitStorage extends Actor {
     @Override
     protected void render() {
         super.render();
-        FRUIT_FONT.drawString(Integer.toString(numFruit), getX(), getY());
+        fruitFont.drawString(Integer.toString(numFruit), getX(), getY());
     }
 }
