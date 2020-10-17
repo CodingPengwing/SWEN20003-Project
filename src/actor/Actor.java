@@ -4,37 +4,70 @@ import maplogic.Location;
 import bagel.Image;
 import java.util.ArrayList;
 
+/** This class is the underlying structure for all Actors in the game. It
+ * contains the type, image and location of the Actor. All Actor related
+ * classes inherit from this class either directly or through another child.
+ */
 public class Actor {
     private Image image;
     final private ActorType type;
-    final private Location location;
+
+    // Location is made protected so that MovableActor can implement movement
+    // logic inside the 'movable' package. It is declared final to restrict
+    // mutability in the current package. Movement logic should not be implemented
+    // anywhere outside the 'moveable' package.
+    final protected Location location;
 
     // To store the current Actors in the game that don't move
     final private static ArrayList<Actor> stationaryActors = new ArrayList<>();
 
+    /** Constructs an Actor when given a type and a location on the map.
+     * Upon creation, the image of the Actor will be set according to the
+     * default images for each type of Actor, the image is immutable.
+     * The Actor will be added to the private static 'stationaryActors'
+     * array if it is not a MovableActor type.
+     * @param type This is set at creation and is immutable. Only accepts
+     *             values of enum ActorType.
+     * @param x This is the x position on the map.
+     * @param y This is the y position on the map.
+     * Using x and y, a Location instance is created.
+     */
     public Actor(ActorType type, double x, double y) {
         this.location = new Location(x, y);
         this.type = type;
         setImage(type);
         switch (type) {
+            // MovableActor types
             case GATHERER:
             case THIEF:
                 break;
+            // stationary Actor types
             default:
                 stationaryActors.add(this);
         }
     }
 
+    /** Returns the type of the Actor
+     * @return instance of ActorType enum
+     */
     public ActorType getType() {
         return type;
     }
 
-    // Determines if 2 Actors are in the same location
-    final public boolean locationEquals(Actor actor) {
-        if (location.equals(actor.location)) return true;
+    /** Determines whether 2 Actors are in the same location.
+     * @param other The other Actor that is being compared to this one.
+     * @return true if both Actors are in the same tile. false otherwise.
+     */
+    final public boolean locationEquals(Actor other) {
+        if (location.equals(other.location)) return true;
         return false;
     }
 
+    /** Returns an ArrayList of all stationary Actors that are at position (x,y).
+     * @param x This is the x position.
+     * @param y This is the y position.
+     * @return ArrayList<Actor> containing all stationary Actors found at that tile.
+     */
     public static ArrayList<Actor> getStationaryActorsAtLocation(double x, double y) {
         ArrayList<Actor> output = new ArrayList<>();
         for (Actor actor : stationaryActors) {
@@ -45,23 +78,25 @@ public class Actor {
         return output;
     }
 
-    // Renders all Actors in the stationaryActors array
+    /** Renders all stationary Actors onto the screen.
+     */
     public static void renderStationaryActors() {
         for (Actor actor : stationaryActors) actor.render();
     }
 
-    // Draws the image of the Actor at their location
+    // Renders the image of the Actor at its location.
     protected void render() {
-        image.drawFromTopLeft(location.getX(), location.getY());
+        image.drawFromTopLeft(getX(), getY());
     }
 
+    // Returns the x coordinate of the Actor
     final protected double getX() { return location.getX(); }
+    // Returns the y coordinate of the Actor
     final protected double getY() { return location.getY(); }
-    final protected void moveUp() { location.moveUp(); }
-    final protected void moveDown() { location.moveDown(); }
-    final protected void moveLeft() { location.moveLeft(); }
-    final protected void moveRight() { location.moveRight(); }
 
+    // Returns all the Actors of the specified types given in the arguments.
+    // To maintain the immutability of the 'stationaryActors' array, a partial
+    // copy is returned through a new ArrayList.
     protected static ArrayList<Actor> getStationaryActorsOfTypes(ActorType... types) {
         ArrayList<Actor> output = new ArrayList<>();
         for (Actor actor : stationaryActors) {
@@ -72,7 +107,8 @@ public class Actor {
         return output;
     }
 
-    // Sets the image for the Actor based on its type
+    // Sets the image for the Actor based on its type.
+    // The following are all the default images for each type.
     private void setImage(ActorType type) {
         switch (type) {
             case TREE:
