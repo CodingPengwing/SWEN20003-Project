@@ -173,16 +173,19 @@ public class ShadowLife extends AbstractGame {
             }
         }
         // This error is thrown when the world file cannot be found.
-        catch (FileNotFoundException e) { exceptionHandler(new InvalidInputException(worldFile)); }
-        // In this block, InvalidInputException is thrown when the input given in a line is
-        // not well-defined.
-        catch (InvalidInputException e) { exceptionHandler(e); }
-        // In this block, NumberFormatException is thrown when the input given in a line is
-        // not well-defined.
-        catch (NumberFormatException e) {
+        catch (FileNotFoundException e) {
+            exceptionHandler(new InvalidInputException(worldFile)); }
+        // This error is thrown when the input given in a line is not well-defined.
+        catch (InvalidInputException e) {
+            exceptionHandler(e); }
+        // This error is also thrown when the input given in a line is not well-defined.
+        catch (IllegalArgumentException e) {
             exceptionHandler(new InvalidInputException(worldFile, lineNumber)); }
-        // This is in case any other Exceptions come up.
-        catch (Exception e) { e.printStackTrace(); }
+        // In case any other Exceptions come up.
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(FAILURE);
+        }
     }
 
     // Gets input from stdin and ensures that it is in the correct format.
