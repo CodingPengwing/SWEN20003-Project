@@ -5,8 +5,6 @@
  * status -1.
  */
 public class InvalidInputException extends Exception {
-    private static int FAILURE = -1;
-
     /** This is the standard error message that is produced when the initial
      * command line input is not well defined.
      */
@@ -30,13 +28,5 @@ public class InvalidInputException extends Exception {
      */
     public InvalidInputException(String worldFile, int lineNumber) {
         super("error: in file \"" + worldFile + "\" at line " + lineNumber);
-    }
-
-    /** This is the standard way to handle exceptions in this program.
-     * Print the message, then exit with status -1.
-     */
-    public void handler() {
-        System.out.println(getMessage());
-        System.exit(FAILURE);
     }
 }

@@ -12,14 +12,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Scanner;
 
-/** This is the main class that runs the program. It overrides its parent's update
- * method to define the general update logic for the game. It is responsible for
- * getting input from command line as well as the world file provided. All inputs
- * will be checked and errors handled primarily using InvalidInputException. The
- * timing (keeping ticks) of the game and other general management tasks also happen
- * in here. This class does not handle Actors, such tasks are entirely delegated
- * to the Actor and MovableActor classes. Instead, this class keeps a higher level
- * view over the program.
+/** This is the main class that runs the program, it inherits from AbstractGame in
+ * the 'bagel' package. It overrides its parent's update method to define the general
+ * update logic for the game. It is responsible for getting input from command line
+ * as well as the world file provided. All inputs will be checked and errors handled
+ * primarily using InvalidInputException. The timing (keeping ticks) of the game and
+ * other general management tasks also happen in here. This class does not handle
+ * Actors, such tasks are entirely delegated to the Actor and MovableActor classes.
+ * Instead, this class keeps a higher level view over the program.
+ *
+ * The documentation for AbstractGame (as part of the bagel package) is provided here:
+ * https://people.eng.unimelb.edu.au/mcmurtrye/bagel-doc/
  */
 public class ShadowLife extends AbstractGame {
     // Exit statuses for the program
@@ -45,10 +48,7 @@ public class ShadowLife extends AbstractGame {
     // Default background image
     private final Image background = new Image("src/res/images/background.png");
 
-    /** Constructs a ShadowLife, which is an instance of AbstractGame, the
-     * underlying structure upon which ShadowLife is built on. The documentation
-     * for AbstractGame (as part of the bagel package) is provided here:
-     * https://people.eng.unimelb.edu.au/mcmurtrye/bagel-doc/
+    /** Constructs a ShadowLife, which is an instance of AbstractGame.
      */
     public ShadowLife() {
         // The default game dimensions and the name "Shadow Life"
@@ -61,7 +61,7 @@ public class ShadowLife extends AbstractGame {
         createSetting();
     }
 
-    /** This is the start of the program
+    /** This is the start of the program. Creates an instance of ShadowLife and runs it.
      * @param args main method's arguments
      */
     public static void main(String[] args) {
@@ -111,14 +111,13 @@ public class ShadowLife extends AbstractGame {
         if (exitStatus == SUCCESS) {
             System.out.println(tickCount + " ticks");
             FruitStorage.tallyHoardsAndStockpiles();
-            System.exit(SUCCESS);
         }
         // If the game hasn't finished, but more than the specified max
         // ticks have passed.
         else {
             System.out.println("Timed out");
-            System.exit(FAILURE);
         }
+        System.exit(exitStatus);
     }
 
     // Opens the given worldFile and creates Actors for the game by scanning each line.
@@ -174,14 +173,14 @@ public class ShadowLife extends AbstractGame {
             }
         }
         // This error is thrown when the world file cannot be found.
-        catch (FileNotFoundException e) { new InvalidInputException(worldFile).handler(); }
+        catch (FileNotFoundException e) { exceptionHandler(new InvalidInputException(worldFile)); }
         // In this block, InvalidInputException is thrown when the input given in a line is
         // not well-defined.
-        catch (InvalidInputException e) { e.handler(); }
+        catch (InvalidInputException e) { exceptionHandler(e); }
         // In this block, NumberFormatException is thrown when the input given in a line is
         // not well-defined.
         catch (NumberFormatException e) {
-            new InvalidInputException(worldFile, lineNumber).handler(); }
+            exceptionHandler(new InvalidInputException(worldFile, lineNumber)); }
         // This is in case any other Exceptions come up.
         catch (Exception e) { e.printStackTrace(); }
     }
@@ -195,14 +194,14 @@ public class ShadowLife extends AbstractGame {
         // The arguments taken from 'args.txt' file, currently pretended to be command line.
         String inputs[] = argsFromFile();
         // Check number of inputs
-        if (inputs.length != EXPECTED_INPUTS) { new InvalidInputException().handler(); }
+        if (inputs.length != EXPECTED_INPUTS) { exceptionHandler(new InvalidInputException()); }
         // Assign inputs
         try {
             tickRate = Integer.parseInt(inputs[TICKRATE_POS]);
             maxTicks = Integer.parseInt(inputs[MAXTICKS_POS]);
             worldFile = inputs[WORLDFILE_POS];
         }
-        catch (Exception e) { new InvalidInputException().handler(); }
+        catch (Exception e) { exceptionHandler(new InvalidInputException()); }
     }
 
     // Gets the arguments provided in 'args.txt' file, currently pretended to be command line.
@@ -212,5 +211,12 @@ public class ShadowLife extends AbstractGame {
         }
         catch (IOException e) { e.printStackTrace(); }
         return null;
+    }
+
+    // This is the standard way to handle exceptions in this program.
+    // Print the message, then exit with status -1.
+    private static void exceptionHandler(Exception e) {
+        System.out.println(e.getMessage());
+        System.exit(FAILURE);
     }
 }

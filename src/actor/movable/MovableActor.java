@@ -61,17 +61,13 @@ public abstract class MovableActor extends Actor {
     final void move() {
         switch (direction.getDirection()) {
             case Direction.UP:
-                location.moveUp();
-                break;
+                location.moveUp(); break;
             case Direction.RIGHT:
-                location.moveRight();
-                break;
+                location.moveRight(); break;
             case Direction.DOWN:
-                location.moveDown();
-                break;
+                location.moveDown(); break;
             case Direction.LEFT:
-                location.moveLeft();
-                break;
+                location.moveLeft(); break;
         }
     }
 
@@ -79,7 +75,6 @@ public abstract class MovableActor extends Actor {
     final void tick() {
         if (!active) return;
         move();
-
         // Find all stationary Actors that the current MovableActor is standing on.
         ArrayList<Actor> actorsStandingOn = getStationaryActorsAtLocation(getX(), getY());
 
@@ -103,7 +98,7 @@ public abstract class MovableActor extends Actor {
             }
         }
         // Check for Gatherers in the same tile.
-        for (Gatherer gatherer : Gatherer.gatherers) {
+        for (MovableActor gatherer : Gatherer.gatherers) {
             if (gatherer.locationEquals(this)) {
                 interactGatherer(); break;
             }
@@ -112,17 +107,13 @@ public abstract class MovableActor extends Actor {
         for (Actor actor : actorsStandingOn) {
             switch (actor.getType()) {
                 case TREE:
-                    interactTree(actor);
-                    break;
+                    interactTree(actor); break;
                 case GOLDENTREE:
-                    interactGoldenTree();
-                    break;
+                    interactGoldenTree(); break;
                 case HOARD:
-                    interactHoard(actor);
-                    break;
+                    interactHoard(actor); break;
                 case STOCKPILE:
-                    interactStockpile(actor);
-                    break;
+                    interactStockpile(actor); break;
             }
         }
     }
@@ -161,8 +152,7 @@ public abstract class MovableActor extends Actor {
         MovableActor newActor;
         switch (getType()) {
             case GATHERER:
-                newActor = new Gatherer(getX(), getY());
-                break;
+                newActor = new Gatherer(getX(), getY()); break;
             default:
                 newActor = new Thief(getX(), getY());
         }

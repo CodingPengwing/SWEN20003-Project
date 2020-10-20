@@ -21,7 +21,7 @@ public class Location {
             this.x = x;
             this.y = y;
         }
-        else System.err.println("(" + x + ", " + y + ") is not a defined tile.");
+        else System.err.println("error: (" + x + ", " + y + ") is not a defined tile.");
     }
 
     /** Returns the x coordinate.

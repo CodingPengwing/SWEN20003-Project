@@ -26,9 +26,7 @@ public class Direction {
      * @param degree This is the degree
      */
     public Direction(int degree) {
-        if (isValid(degree))
-            this.degree = degree;
-        else System.err.println("Cannot set direction's degree to value: " + degree);
+        setDirection(degree);
     }
 
     /** Returns the degree of the Direction.
@@ -48,7 +46,7 @@ public class Direction {
             if (degree < 0) degree += ANGLE_360;
             this.degree = degree;
         }
-        else System.err.println("Cannot set direction's degree to value: " + degree);
+        else System.err.println("error: cannot set direction's degree to value: " + degree);
     }
 
     /** Turns the direction 90 degrees anticlockwise */
@@ -66,6 +64,7 @@ public class Direction {
         setDirection(degree + ANGLE_180);
     }
 
+    // Checks that the degree angle is a multiple of 90.
     private boolean isValid(int degree) {
         if (degree % ANGLE_90 == 0) return true;
         return false;

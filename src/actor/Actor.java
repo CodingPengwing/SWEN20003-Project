@@ -36,13 +36,11 @@ public class Actor {
         this.type = type;
         setImage(type);
         switch (type) {
-            // MovableActor types
+            // MovableActor types, don't add to stationaryActors array
             case GATHERER:
-            case THIEF:
-                break;
+            case THIEF: break;
             // stationary Actor types
-            default:
-                stationaryActors.add(this);
+            default: stationaryActors.add(this);
         }
     }
 
@@ -110,44 +108,33 @@ public class Actor {
     private void setImage(ActorType type) {
         switch (type) {
             case TREE:
-                image = new Image("src/res/images/tree.png");
-                break;
+                image = new Image("src/res/images/tree.png"); break;
             case GOLDENTREE:
-                image = new Image("src/res/images/gold-tree.png");
-                break;
+                image = new Image("src/res/images/gold-tree.png"); break;
             case STOCKPILE:
-                image = new Image("src/res/images/cherries.png");
-                break;
+                image = new Image("src/res/images/cherries.png"); break;
             case HOARD:
-                image = new Image("src/res/images/hoard.png");
-                break;
+                image = new Image("src/res/images/hoard.png"); break;
             case PAD:
-                image = new Image("src/res/images/pad.png");
-                break;
+                image = new Image("src/res/images/pad.png"); break;
             case FENCE:
-                image = new Image("src/res/images/fence.png");
-                break;
+                image = new Image("src/res/images/fence.png"); break;
             case SIGNUP:
-                image = new Image("src/res/images/up.png");
-                break;
+                image = new Image("src/res/images/up.png"); break;
             case SIGNDOWN:
-                image = new Image("src/res/images/down.png");
-                break;
+                image = new Image("src/res/images/down.png"); break;
             case SIGNLEFT:
-                image = new Image("src/res/images/left.png");
-                break;
+                image = new Image("src/res/images/left.png"); break;
             case SIGNRIGHT:
-                image = new Image("src/res/images/right.png");
-                break;
+                image = new Image("src/res/images/right.png"); break;
             case POOL:
-                image = new Image("src/res/images/pool.png");
-                break;
+                image = new Image("src/res/images/pool.png"); break;
             case GATHERER:
-                image = new Image("src/res/images/gatherer.png");
-                break;
+                image = new Image("src/res/images/gatherer.png"); break;
             case THIEF:
-                image = new Image("src/res/images/thief.png");
-                break;
+                image = new Image("src/res/images/thief.png"); break;
+            default:
+                System.err.println("error: no preset image for this actor type: " + type.toString());
         }
     }
 }

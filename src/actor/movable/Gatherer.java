@@ -2,11 +2,12 @@ package actor.movable;
 
 import actor.*;
 import maplogic.Direction;
+
 import java.util.ArrayList;
 
 /** This class represents the Gatherer type of Actor in the game. It is managed by
  * MovableActor, meaning once a Gatherer is constructed, it will only be updated
- * through MovableActor. The class overrides interaction logic from MovableActor
+ * through MovableActor. This class overrides interaction logic from MovableActor
  * to interact with stationary Actors during a tick.
  */
 public class Gatherer extends MovableActor {
