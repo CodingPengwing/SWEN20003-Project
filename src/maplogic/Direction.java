@@ -19,22 +19,25 @@ public enum Direction {
     LEFT;
 
     // Array of all the defined Directions
-    private static Direction[] directions = values();
+    private final static Direction[] directions = values();
 
     /** Returns the current direction rotated 90 degrees anticlockwise */
     public Direction rotateLeft() {
+        // Find the Direction value in the previous slot of the directions array
         int newDirectionPosition = (this.ordinal()-1 + directions.length) % directions.length;
         return directions[newDirectionPosition];
     }
 
     /** Returns the current direction rotated 90 degrees clockwise */
     public Direction rotateRight() {
+        // Find the Direction value in the next slot of the directions array
         int newDirectionPosition = (this.ordinal()+1) % directions.length;
         return directions[newDirectionPosition];
     }
 
     /** Returns the current direction rotated 180 degrees backward */
     public Direction rotateReverse() {
+        // Find the Direction value 2 slots forward in the directions array
         int newDirectionPosition = (this.ordinal()+2) % directions.length;
         return directions[newDirectionPosition];
     }

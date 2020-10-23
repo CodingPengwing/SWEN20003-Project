@@ -8,9 +8,15 @@ import bagel.Image;
 import maplogic.Location;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/** This class manages all Actors in a world, all Actors are stored here. The class is
+ * handles the updating and rendering these Actors, while also rendering the background
+ * for the game. It creates Actors using the world file given in the constructor, and
+ * throws InvalidInputExceptions if the file is not in the correct format.
+ */
 public class World {
     // Default background image
     private final static Image background = new Image("src/res/images/background.png");
@@ -19,32 +25,74 @@ public class World {
     private final static int BACKGROUND_X = 0;
     private final static int BACKGROUND_Y = 0;
 
+    // To store the current Actors in the game that don't move
+    private final static ArrayList<Actor> stationaryActors = new ArrayList<>();
+    // To store all the Gatherers in the game
+    private final static ArrayList<Gatherer> gatherers = new ArrayList<>();
+    // To store all the Thieves in the game
+    private final static ArrayList<Thief> thieves = new ArrayList<>();
+
+    /** Constructs a World containing all the Actors of that world given an input
+     * world file. If the file is not a csv with 3 input arguments per line, or
+     * the second and third inputs are not integers, an error will be thrown.
+     * @param worldFile This is the world file where input is taken from.
+     * @throws InvalidInputException This is the Exception thrown if the file is
+     * not in the correct format.
+     */
     public World(String worldFile) throws InvalidInputException { createSetting(worldFile); }
 
-    // Updates the state of the world. The whole implementation is delegated
-    // to the MovableActor class. As MovableActors move around, the state of
-    // the world also changes through their interaction with other Actors.
+    /** Updates the state of the world by triggering the tick actions for each
+     * Gatherer and Thief. As these MovableActors move around, the state of
+     * the world also changes through their interaction with other Actors.
+     */
     public void updateState() {
-        MovableActor.tickMovableActors();
+        int currentNumGatherers = gatherers.size();
+        for (int i = 0; i < currentNumGatherers; i++) {
+            Gatherer gatherer = gatherers.get(i);
+            Actor newActor = gatherer.tick(stationaryActors, gatherers);
+            if (newActor != null) gatherers.add((Gatherer) newActor);
+        }
+        int currentNumThieves = thieves.size();
+        for (int i = 0; i < currentNumThieves; i++) {
+            Thief thief = thieves.get(i);
+            Actor newActor = thief.tick(stationaryActors, gatherers);
+            if (newActor != null) thieves.add((Thief) newActor);
+        }
     }
 
-    // Renders all Actors and the background in the game's current state.
-    // The rendering of Actors are delegated to Actor and MovableActor
-    // classes.
+    /** Renders all Actors and the background in the game's current state. */
     public void renderState() {
         background.drawFromTopLeft(BACKGROUND_X, BACKGROUND_Y);
-        Actor.renderStationaryActors();
-        MovableActor.renderMovableActors();
+        for (Actor actor : stationaryActors) actor.render();
+        for (Actor actor : gatherers) actor.render();
+        for (Actor actor : thieves) actor.render();
     }
 
-    public void printEndState() { FruitStorage.tallyHoardsAndStockpiles(); }
+    /** Prints the number of fruits at each Hoard and Stockpile to stdout in
+     * the order these Actors were created.
+     */
+    public void printEndState() {
+        for (Actor actor : stationaryActors) {
+            if (actor.getType() == ActorType.HOARD || actor.getType() == ActorType.STOCKPILE) {
+                FruitStorage fs = (FruitStorage) actor;
+                System.out.println(fs.getNumFruit());
+            }
+        }
+    }
 
+    /** Returns the current state of the world (active or inactive). Depending
+     * on whether there are still active Actors.
+     * @return true if still active, false otherwise.
+     */
     public boolean isActive() {
-        if (MovableActor.actorsActive()) return true;
+        for (MovableActor actor : gatherers) { if (actor.isActive()) return true; }
+        for (MovableActor actor : thieves) { if (actor.isActive()) return true; }
         return false;
     }
 
     // Opens the given worldFile and creates Actors for the game by scanning each line.
+    // Will throw InvalidInputException with the specific message for the error if the
+    // file is not found or any of the lines are in the wrong format.
     private static void createSetting(String worldFile) throws InvalidInputException {
         final int EXPECTED_INPUTS = 3;
         final int TYPE_POS = 0;
@@ -52,6 +100,7 @@ public class World {
         final int Y_POS = 2;
         int lineNumber = 0;
 
+        // Open the file
         try (Scanner scanner = new Scanner(new FileReader(worldFile))) {
             while (scanner.hasNextLine()) {
                 lineNumber++;
@@ -73,22 +122,34 @@ public class World {
 
                 // Check whether the location given is well-defined.
                 if (Location.isDefinedTile(x, y)) {
+                    Actor newActor;
                     // Create the Actor instance.
                     switch (actorType) {
-                        case GATHERER: new Gatherer(x, y); break;
-                        case THIEF: new Thief(x, y); break;
+                        case GATHERER:
+                            newActor = new Gatherer(x, y);
+                            gatherers.add((Gatherer) newActor);
+                            break;
+                        case THIEF:
+                            newActor = new Thief(x, y);
+                            thieves.add((Thief) newActor);
+                            break;
                         // If the Actor is a FruitStorage type
                         case TREE: case STOCKPILE: case HOARD:
-                            new FruitStorage(actorType, x, y); break;
+                            newActor = new FruitStorage(actorType, x, y);
+                            stationaryActors.add(newActor); break;
                         // If the Actor is any other type
-                        default: new Actor(actorType, x, y);
+                        default:
+                            newActor = new Actor(actorType, x, y);
+                            stationaryActors.add(newActor);
                     }
                 }
             }
         }
-        // This error is thrown when the world file cannot be found.
+        // This error is thrown when the world file cannot be found. Re-throws an
+        // Exception with the message indicating unknown file.
         catch (FileNotFoundException e) { throw new InvalidInputException(worldFile); }
         // All other errors are thrown when the input given in a line is not well-defined.
+        // Re-throws an Exception with the message indicating the line with wrong format.
         catch (Exception e) { throw new InvalidInputException(worldFile, lineNumber); }
     }
 }

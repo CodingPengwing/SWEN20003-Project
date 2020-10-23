@@ -4,12 +4,13 @@ import actor.Actor;
 import actor.ActorType;
 import actor.FruitStorage;
 import maplogic.*;
+
 import java.util.ArrayList;
 
-/** This is an implementation of the template method pattern; MovableActor sets
- * the template, Gatherer and Thief follow the template. This class manages all
- * Actors that move around the map (currently Gatherers and Thief's). Hence, all
- * movement logic is defined in this class and available inside this package only.
+/** This is an implementation of the template method pattern; MovableActor specifies
+ * the template, all inheriting classes must follow the template. This class extends
+ * to all Actors that move around the map (currently Gatherers and Thief's). Hence,
+ * all movement logic is defined in this class and available inside this package only.
  */
 public abstract class MovableActor extends Actor {
     boolean active;
@@ -17,7 +18,7 @@ public abstract class MovableActor extends Actor {
     Direction direction;
 
     /** Constructs an instance of MovableActor through the Gatherer or Thief
-     * constructors. Upon call, the direction is set to UP by default.
+     * constructors. Upon creation, the direction is set to UP by default.
      * @param type This is the ActorType instance, it is passed on to the Actor
      *            constructor to store.
      * @param x This is the x position on the map, it is passed on to the Actor
@@ -32,29 +33,10 @@ public abstract class MovableActor extends Actor {
         direction = Direction.UP;
     }
 
-    /** This method triggers the tick() for all MovableActors. As these Actors
-     * move around and interact with other Actors, the game state is updated.
+    /** Returns the state of the MovableActor (active or inactive)
+     * @return true if active, false otherwise
      */
-    public static void tickMovableActors() {
-        Gatherer.tickGatherers();
-        Thief.tickThieves();
-    }
-
-    /** This method renders all MovableActors onto the screen.
-     */
-    public static void renderMovableActors() {
-        Gatherer.renderGatherers();
-        Thief.renderThieves();
-    }
-
-    /** This method checks all MovableActors to see whether there are still
-     * any active Actors in the game.
-     * @return true if there is at least one active Actor. false if none.
-     */
-    public static boolean actorsActive() {
-        if (Gatherer.gatherersActive() || Thief.thievesActive()) return true;
-        return false;
-    }
+    public boolean isActive() { return active; }
 
     // Moves the Actor one tile in the direction they are currently facing
     final void move() {
@@ -66,38 +48,53 @@ public abstract class MovableActor extends Actor {
         }
     }
 
-    // Tick logic for all MovableActors.
-    final void tick() {
-        if (!active) return;
+    /** Tick logic for all MovableActors. If the Actor is active, it moves one tile
+     * in the direction it is facing, then carries out all the interaction logic for
+     * the tick. This method may return a new Movable actor if a Mitosis Pool was
+     * interacted with during the tick, the type of Actor returned is the same as the
+     * type of Actor that performs the tick.
+     * @param stationaryActors Array of stationary Actors to interact with
+     * @param gatherers Array of Gatherers to interact with
+     * @return a MovableActor with same type as this Actor if interacted with Mitosis
+     * Pool, null if no Pool interaction.
+     */
+    public final MovableActor tick(ArrayList<Actor> stationaryActors, ArrayList<Gatherer> gatherers) {
+        if (!active) return null;
         move();
-        // Find all stationary Actors that the current MovableActor is standing on.
-        ArrayList<Actor> actorsStandingOn = getStationaryActorsAtLocation(getX(), getY());
+        MovableActor newActor = null;
 
         // Check for Fences, Pools, Signs and Pads in the same tile.
-        for (Actor actor : actorsStandingOn) {
-            switch (actor.getType()) {
-                case FENCE: interactFence(); break;
-                case POOL: interactPool(); break;
-                case SIGNUP: interactSignUp(); break;
-                case SIGNDOWN: interactSignDown(); break;
-                case SIGNLEFT: interactSignLeft(); break;
-                case SIGNRIGHT: interactSignRight(); break;
-                case PAD: interactPad(); break;
+        for (Actor actor : stationaryActors) {
+            if (this.locationEquals(actor)) {
+                switch (actor.getType()) {
+                    case FENCE: interactFence(); break;
+                    case POOL:
+                        newActor = interactPool();
+                        break;
+                    case SIGNUP: interactSignUp(); break;
+                    case SIGNDOWN: interactSignDown(); break;
+                    case SIGNLEFT: interactSignLeft(); break;
+                    case SIGNRIGHT: interactSignRight(); break;
+                    case PAD: interactPad(); break;
+                }
             }
         }
         // Check for Gatherers in the same tile.
-        for (MovableActor gatherer : Gatherer.gatherers) {
-            if (gatherer.locationEquals(this)) { interactGatherer(); break; }
+        for (Gatherer gatherer : gatherers) {
+            if (this.locationEquals(gatherer)) { interactGatherer(); break; }
         }
         // Check for Trees, Hoards and Stockpiles in the same tile.
-        for (Actor actor : actorsStandingOn) {
-            switch (actor.getType()) {
-                case TREE: interactTree(actor); break;
-                case GOLDENTREE: interactGoldenTree(); break;
-                case HOARD: interactHoard(actor); break;
-                case STOCKPILE: interactStockpile(actor); break;
+        for (Actor actor : stationaryActors) {
+            if (this.locationEquals(actor)) {
+                switch (actor.getType()) {
+                    case TREE: interactTree(actor); break;
+                    case GOLDENTREE: interactGoldenTree(); break;
+                    case HOARD: interactHoard(actor); break;
+                    case STOCKPILE: interactStockpile(actor); break;
+                }
             }
         }
+        return newActor;
     }
 
     // Interaction with Hoard
@@ -125,8 +122,9 @@ public abstract class MovableActor extends Actor {
         move();
     }
 
-    // Interaction with Mitosis Pool
-    void interactPool() {
+    // Interaction with Mitosis Pool. This method returns a new Movable actor
+    // created during the interaction.
+    MovableActor interactPool() {
         // Create a new MovableActor
         MovableActor newActor;
         switch (getType()) {
@@ -140,6 +138,7 @@ public abstract class MovableActor extends Actor {
         direction = direction.rotateRight();
         move();
         carrying = false;
+        return newActor;
     }
 
     // Interaction with GoldenTree

@@ -6,14 +6,13 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/** This is the main class that runs the program, it inherits from AbstractGame in
- * the 'bagel' package. It overrides its parent's update method to define the general
- * update logic for the game. It is responsible for getting input from command line
- * as well as the world file provided. All inputs will be checked and errors handled
- * primarily using InvalidInputException. The timing (keeping ticks) of the game and
- * other general management tasks also happen in here. This class does not handle
- * Actors, such tasks are entirely delegated to the Actor and MovableActor classes.
- * Instead, this class keeps a higher level view over the program.
+/** This is the main class that runs the program, keeps a high level view over the program.
+ * It inherits from AbstractGame in the 'bagel' package and overrides AbstractGame's update
+ * method to define the general update logic for the game. It is responsible for getting
+ * input from command line, then constructs a World object that will manage the updating
+ * and rendering of Actors. Command line inputs are checked for errors (wrong number of
+ * args, wrong input types). The timing (keeping ticks) of the game and other general
+ * management tasks also happen in here.
  *
  * The documentation for AbstractGame (as part of the bagel package) is provided here:
  * https://people.eng.unimelb.edu.au/mcmurtrye/bagel-doc/
@@ -33,17 +32,19 @@ public class ShadowLife extends AbstractGame {
     private long lastTick;
     private int tickCount = 0;
 
-    // The World containing Actors of the game
+    // The World instance that manages all the Actors
     private World world;
 
-    /** Constructs a ShadowLife, which is an instance of AbstractGame.
+    /** Constructs a ShadowLife, which is an instance of AbstractGame. Uses the
+     * command line args to get the input world file, while checking for errors.
+     * A World instance will be created to store and manage all the Actors of
+     * the game.
      */
     public ShadowLife() {
         // The default game dimensions and the name "Shadow Life"
         super(GAME_WIDTH, GAME_HEIGHT, "Shadow Life");
         // The starting time of the program
         lastTick = System.currentTimeMillis();
-
         try {
             String worldFile = getCommandLineInput();
             world = new World(worldFile);
@@ -52,19 +53,18 @@ public class ShadowLife extends AbstractGame {
     }
 
     /** This is the start of the program. Creates an instance of ShadowLife and runs it.
-     * @param args main method's arguments
+     * @param args standard main args
      */
     public static void main(String[] args) { new ShadowLife().run(); }
 
     /** This method provides AbstractGame with updates to the program. It renders
      * the game constantly, but only provides changes to the game after a full tick.
-     * @param input This is the same input as defined in AbstractGame
+     * @param input input field required for AbstractGame's update()
      */
     @Override
     public void update(Input input) {
         // Get the current time
         long currentTime = System.currentTimeMillis();
-
         // Check whether a full tick has passed
         if (currentTime - lastTick > tickRate) {
             world.updateState();
@@ -113,15 +113,11 @@ public class ShadowLife extends AbstractGame {
             // Make sure the input is positive
             if (tickRate < 0 || maxTicks < 0) { throw new InvalidInputException(); }
         }
-        catch (InvalidInputException e) {
-            inputExceptionHandler(e);
-        }
+        catch (InvalidInputException e) { inputExceptionHandler(e); }
         catch (IllegalArgumentException e) {
             inputExceptionHandler(new InvalidInputException());
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        catch (Exception e) { e.printStackTrace(); System.exit(FAILURE); }
 
         return worldFile;
     }

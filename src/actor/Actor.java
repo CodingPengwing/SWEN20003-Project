@@ -2,7 +2,6 @@ package actor;
 
 import maplogic.Location;
 import bagel.Image;
-import java.util.ArrayList;
 
 /** This class is the underlying structure for all Actors in the game. It
  * contains the type, image and location of the Actor. All Actor related
@@ -17,14 +16,9 @@ public class Actor {
     private Image image;
     private final ActorType type;
 
-    // To store the current Actors in the game that don't move
-    private final static ArrayList<Actor> stationaryActors = new ArrayList<>();
-
     /** Constructs an Actor when given a type and a location on the map.
      * Upon creation, the image of the Actor will be set according to the
      * default images for each type of Actor, the image is immutable.
-     * The Actor will be added to the private static 'stationaryActors'
-     * array if it is not a MovableActor type.
      * @param type This is set at creation and is immutable. Only accepts
      *             values of enum ActorType.
      * @param x This is the x position on the map.
@@ -35,12 +29,6 @@ public class Actor {
         this.location = new Location(x, y);
         this.type = type;
         setImage(type);
-        switch (type) {
-            // MovableActor types, don't add to stationaryActors array
-            case GATHERER: case THIEF: break;
-            // stationary Actor types
-            default: stationaryActors.add(this);
-        }
     }
 
     /** Returns the type of the Actor, this enum object is immutable
@@ -59,44 +47,16 @@ public class Actor {
         return false;
     }
 
-    /** Returns an ArrayList of all stationary Actors that are at position (x,y).
-     * @param x This is the x position.
-     * @param y This is the y position.
-     * @return ArrayList<Actor> containing all stationary Actors found at that tile.
+    /** Renders the image of the Actor at its location. Can be overridden by
+     * child classes to render extra things like number of fruits.
      */
-    public static ArrayList<Actor> getStationaryActorsAtLocation(double x, double y) {
-        ArrayList<Actor> output = new ArrayList<>();
-        for (Actor actor : stationaryActors) {
-            if (actor.getX() == x && actor.getY() == y) output.add(actor);
-        }
-        return output;
-    }
+    public void render() { image.drawFromTopLeft(getX(), getY()); }
 
-    /** Renders all stationary Actors onto the screen. */
-    public static void renderStationaryActors() {
-        for (Actor actor : stationaryActors) { actor.render(); }
-    }
+    /** Returns the x coordinate of the Actor */
+    public final double getX() { return location.getX(); }
 
-    // Renders the image of the Actor at its location. Can be overridden.
-    protected void render() { image.drawFromTopLeft(getX(), getY()); }
-
-    // Returns the x coordinate of the Actor
-    protected final double getX() { return location.getX(); }
-    // Returns the y coordinate of the Actor
-    protected final double getY() { return location.getY(); }
-
-    // Returns all the Actors of the specified types given in the arguments.
-    // To maintain the immutability of the 'stationaryActors' array, a partial
-    // copy is returned through a new ArrayList.
-    protected static ArrayList<Actor> getStationaryActorsOfTypes(ActorType... requiredTypes) {
-        ArrayList<Actor> output = new ArrayList<>();
-        for (Actor actor : stationaryActors) {
-            for (ActorType type : requiredTypes) {
-                if (actor.type.equals(type)) { output.add(actor); break; }
-            }
-        }
-        return output;
-    }
+    /** Returns the y coordinate of the Actor */
+    public final double getY() { return location.getY(); }
 
     // Sets the image for the Actor based on its type.
     // The following are all the default images for each type.

@@ -1,8 +1,6 @@
 /** This class contains most of the error handling that happens while the program
  * is taking input from the command line or world file. There are 3 categories of
- * errors that are catered for, divided into 3 different constructors. The standard
- * procedure to handle these exceptions is to print the error message and exit with
- * status -1.
+ * errors that are catered for, divided into 3 different constructors.
  */
 public class InvalidInputException extends Exception {
     /** This is the standard error message that is produced when the initial
@@ -14,7 +12,7 @@ public class InvalidInputException extends Exception {
 
     /** This is the error message that is produced when the worldFile given in
      * the command line arguments is not found.
-     * @param worldFile
+     * @param worldFile This is the world file that caused the error.
      */
     public InvalidInputException(String worldFile) {
         super("error: file \"" + worldFile + "\" not found");
@@ -23,8 +21,8 @@ public class InvalidInputException extends Exception {
     /** This is the error message that is produced when the a line inside a
      * world file is not well defined. The correct format should be:
      * [actor type],[x coordinate],[y coordinate]
-     * @param worldFile This is the world file given through cmd args.
-     * @param lineNumber This is the line number where the error occurred.
+     * @param worldFile This is the world file where the error was found.
+     * @param lineNumber This is the line that caused the error.
      */
     public InvalidInputException(String worldFile, int lineNumber) {
         super("error: in file \"" + worldFile + "\" at line " + lineNumber);
