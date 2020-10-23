@@ -47,15 +47,19 @@ public class World {
      */
     public void updateState() {
         int currentNumGatherers = gatherers.size();
+        // Tick all current Gatherers from last tick only
         for (int i = 0; i < currentNumGatherers; i++) {
             Gatherer gatherer = gatherers.get(i);
             Actor newActor = gatherer.tick(stationaryActors, gatherers);
+            // If a new Gatherer was created during tick, add to 'gatherers'
             if (newActor != null) gatherers.add((Gatherer) newActor);
         }
         int currentNumThieves = thieves.size();
+        // Tick all current Thief's from last tick only
         for (int i = 0; i < currentNumThieves; i++) {
             Thief thief = thieves.get(i);
             Actor newActor = thief.tick(stationaryActors, gatherers);
+            // If a new Thief was created during tick, add to 'gatherers'
             if (newActor != null) thieves.add((Thief) newActor);
         }
     }
