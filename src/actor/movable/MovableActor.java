@@ -12,7 +12,6 @@ import java.util.ArrayList;
  * movement logic is defined in this class and available inside this package only.
  */
 public abstract class MovableActor extends Actor {
-    private final static int DEFAULT_DIRECTION = Direction.UP;
     boolean active;
     boolean carrying;
     Direction direction;
@@ -30,7 +29,7 @@ public abstract class MovableActor extends Actor {
         super(type, x, y);
         active = true;
         carrying = false;
-        direction = new Direction(DEFAULT_DIRECTION);
+        direction = Direction.UP;
     }
 
     /** This method triggers the tick() for all MovableActors. As these Actors
@@ -59,11 +58,11 @@ public abstract class MovableActor extends Actor {
 
     // Moves the Actor one tile in the direction they are currently facing
     final void move() {
-        switch (direction.getDirection()) {
-            case Direction.UP: location.moveUp(); break;
-            case Direction.RIGHT: location.moveRight(); break;
-            case Direction.DOWN: location.moveDown(); break;
-            case Direction.LEFT: location.moveLeft(); break;
+        switch (direction) {
+            case UP: location.moveUp(); break;
+            case RIGHT: location.moveRight(); break;
+            case DOWN: location.moveDown(); break;
+            case LEFT: location.moveLeft(); break;
         }
     }
 
@@ -88,7 +87,7 @@ public abstract class MovableActor extends Actor {
         }
         // Check for Gatherers in the same tile.
         for (MovableActor gatherer : Gatherer.gatherers) {
-            if (gatherer.locationEquals(this)) interactGatherer(); break;
+            if (gatherer.locationEquals(this)) { interactGatherer(); break; }
         }
         // Check for Trees, Hoards and Stockpiles in the same tile.
         for (Actor actor : actorsStandingOn) {
@@ -108,10 +107,10 @@ public abstract class MovableActor extends Actor {
     abstract void interactStockpile(Actor actor);
 
     // Interaction with Sign
-    final void interactSignUp() { direction.setDirection(Direction.UP); }
-    final void interactSignDown() { direction.setDirection(Direction.DOWN); }
-    final void interactSignLeft() { direction.setDirection(Direction.LEFT); }
-    final void interactSignRight() { direction.setDirection(Direction.RIGHT); }
+    final void interactSignUp() { direction = Direction.UP; }
+    final void interactSignDown() { direction = Direction.DOWN; }
+    final void interactSignLeft() { direction = Direction.LEFT; }
+    final void interactSignRight() { direction = Direction.RIGHT; }
 
     // Interaction with Pad
     void interactPad() {}
@@ -122,7 +121,7 @@ public abstract class MovableActor extends Actor {
     // Interaction with Fence
     void interactFence() {
         active = false;
-        direction.rotateReverse();
+        direction = direction.rotateReverse();
         move();
     }
 
@@ -135,11 +134,10 @@ public abstract class MovableActor extends Actor {
             default: newActor = new Gatherer(getX(), getY());
         }
         // Move left with the new MovableActor
-        newActor.direction.setDirection(direction.getDirection());
-        newActor.direction.rotateLeft();
+        newActor.direction = direction.rotateLeft();
         newActor.move();
-        // Move right with existing MovableActor, reset to make it "new"
-        direction.rotateRight();
+        // Move right with existing MovableActor
+        direction = direction.rotateRight();
         move();
         carrying = false;
     }

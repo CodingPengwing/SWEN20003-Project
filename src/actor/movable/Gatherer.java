@@ -24,7 +24,8 @@ public class Gatherer extends MovableActor {
      */
     public Gatherer(double x, double y) {
         super(ActorType.GATHERER, x, y);
-        direction.setDirection(Direction.LEFT);
+        // Default direction for Gatherer is left
+        direction = Direction.LEFT;
         gatherers.add(this);
     }
 
@@ -32,7 +33,7 @@ public class Gatherer extends MovableActor {
     // Interaction with Golden Tree
     boolean interactGoldenTree() {
         if (super.interactGoldenTree()) {
-            direction.rotateReverse();
+            direction = direction.rotateReverse();
             return true;
         }
         return false;
@@ -42,7 +43,7 @@ public class Gatherer extends MovableActor {
     // Interaction with Tree
     boolean interactTree(Actor actor) {
         if (super.interactTree(actor)) {
-            direction.rotateReverse();
+            direction = direction.rotateReverse();
             return true;
         }
         return false;
@@ -56,7 +57,7 @@ public class Gatherer extends MovableActor {
             FruitStorage storage = (FruitStorage) actor;
             storage.increaseNumFruit();
         }
-        direction.rotateReverse();
+        direction = direction.rotateReverse();
     }
 
     @Override
@@ -70,9 +71,7 @@ public class Gatherer extends MovableActor {
     }
 
     // Triggers render() for all Gatherers
-    static void renderGatherers() {
-        for (Gatherer gatherer : gatherers) gatherer.render();
-    }
+    static void renderGatherers() { for (Gatherer gatherer : gatherers) gatherer.render(); }
 
     // Checks whether any Gatherers are still active
     static boolean gatherersActive() {

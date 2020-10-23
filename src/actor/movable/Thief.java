@@ -30,6 +30,7 @@ public class Thief extends MovableActor {
     // Interaction with Mitosis Pool
     void interactPool() {
         super.interactPool();
+        // Reset consuming to "new" state
         consuming = false;
     }
 
@@ -42,7 +43,7 @@ public class Thief extends MovableActor {
     @Override
     // Interaction with Gatherer
     void interactGatherer() {
-        direction.rotateLeft();
+        direction = direction.rotateLeft();
     }
 
     @Override
@@ -56,13 +57,13 @@ public class Thief extends MovableActor {
                     carrying = true;
                     hoard.decreaseNumFruit();
                 }
-                else direction.rotateRight();
+                else direction = direction.rotateRight();
             }
         }
         else if (carrying) {
             carrying = false;
             hoard.increaseNumFruit();
-            direction.rotateRight();
+            direction = direction.rotateRight();
         }
     }
 
@@ -75,20 +76,22 @@ public class Thief extends MovableActor {
                 carrying = true;
                 consuming = false;
                 stockpile.decreaseNumFruit();
-                direction.rotateRight();
+                direction = direction.rotateRight();
             }
         }
-        else direction.rotateRight();
+        else direction = direction.rotateRight();
     }
 
     // Triggers tick() for all Thief's
     static void tickThieves() {
         int currentNumThieves = thieves.size();
-        for (int i = 0; i < currentNumThieves; i++) thieves.get(i).tick();
+        for (int i = 0; i < currentNumThieves; i++) { thieves.get(i).tick(); }
     }
 
     // Triggers render() for all Thief's
-    static void renderThieves() { for (Thief thief : thieves) thief.render(); }
+    static void renderThieves() {
+        for (Thief thief : thieves) { thief.render(); }
+    }
 
     // Checks whether any Thief's are still active
     static boolean thievesActive() {

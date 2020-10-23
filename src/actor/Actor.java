@@ -55,7 +55,7 @@ public class Actor {
      * @return true if both Actors are in the same tile. false otherwise.
      */
     public final boolean locationEquals(Actor other) {
-        if (location.equals(other.location)) return true;
+        if (location.equals(other.location)) { return true; }
         return false;
     }
 
@@ -73,7 +73,9 @@ public class Actor {
     }
 
     /** Renders all stationary Actors onto the screen. */
-    public static void renderStationaryActors() { for (Actor actor : stationaryActors) actor.render(); }
+    public static void renderStationaryActors() {
+        for (Actor actor : stationaryActors) { actor.render(); }
+    }
 
     // Renders the image of the Actor at its location. Can be overridden.
     protected void render() { image.drawFromTopLeft(getX(), getY()); }
@@ -90,7 +92,7 @@ public class Actor {
         ArrayList<Actor> output = new ArrayList<>();
         for (Actor actor : stationaryActors) {
             for (ActorType type : requiredTypes) {
-                if (actor.type.equals(type)) output.add(actor); break;
+                if (actor.type.equals(type)) { output.add(actor); break; }
             }
         }
         return output;
