@@ -154,17 +154,14 @@ public class ShadowLife extends AbstractGame {
                     // Create the Actor instance.
                     switch (actorType) {
                         case GATHERER:
-                            new Gatherer(x, y);
-                            break;
+                            new Gatherer(x, y); break;
                         case THIEF:
-                            new Thief(x, y);
-                            break;
+                            new Thief(x, y); break;
                         // If the Actor is a FruitStorage type
                         case TREE:
                         case STOCKPILE:
                         case HOARD:
-                            new FruitStorage(actorType, x, y);
-                            break;
+                            new FruitStorage(actorType, x, y); break;
                         // If the Actor is any other type
                         default:
                             new Actor(actorType, x, y);
@@ -203,15 +200,15 @@ public class ShadowLife extends AbstractGame {
             tickRate = Integer.parseInt(inputs[TICKRATE_POS]);
             maxTicks = Integer.parseInt(inputs[MAXTICKS_POS]);
             worldFile = inputs[WORLDFILE_POS];
+            // Make sure the input is positive
+            if (tickRate < 0 || maxTicks < 0) throw new InvalidInputException();
         }
         catch (Exception e) { exceptionHandler(new InvalidInputException()); }
     }
 
     // Gets the arguments provided in 'args.txt' file, currently pretended to be command line.
     private static String[] argsFromFile() {
-        try {
-            return Files.readString(Path.of("args.txt"), Charset.defaultCharset()).split(" ");
-        }
+        try { return Files.readString(Path.of("args.txt"), Charset.defaultCharset()).split(" "); }
         catch (IOException e) { e.printStackTrace(); }
         return null;
     }

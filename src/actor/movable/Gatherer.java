@@ -61,9 +61,7 @@ public class Gatherer extends MovableActor {
 
     @Override
     // Interaction with Stockpile
-    void interactStockpile(Actor actor) {
-        interactHoard(actor);
-    }
+    void interactStockpile(Actor actor) { interactHoard(actor); }
 
     // Triggers tick() for all Gatherers
     static void tickGatherers() {
@@ -78,9 +76,7 @@ public class Gatherer extends MovableActor {
 
     // Checks whether any Gatherers are still active
     static boolean gatherersActive() {
-        for (MovableActor gatherer : gatherers) {
-            if (gatherer.active) return true;
-        }
+        for (MovableActor gatherer : gatherers) { if (gatherer.active) return true; }
         return false;
     }
 }

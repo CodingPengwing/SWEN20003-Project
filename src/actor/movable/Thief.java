@@ -10,7 +10,8 @@ import java.util.ArrayList;
  */
 public class Thief extends MovableActor {
     private boolean consuming;
-    final static ArrayList<Thief> thieves = new ArrayList<>();
+    // To store all the Thieves in the game
+    private final static ArrayList<Thief> thieves = new ArrayList<>();
 
     /** Constructs a Thief type Actor at the location (x,y) on the map. All Thief's
      * created will be added to the default static 'thieves' array.
@@ -56,7 +57,6 @@ public class Thief extends MovableActor {
                     hoard.decreaseNumFruit();
                 }
                 else direction.rotateRight();
-
             }
         }
         else if (carrying) {
@@ -88,16 +88,11 @@ public class Thief extends MovableActor {
     }
 
     // Triggers render() for all Thief's
-    static void renderThieves() {
-        for (Thief thief : thieves) thief.render();
-    }
+    static void renderThieves() { for (Thief thief : thieves) thief.render(); }
 
     // Checks whether any Thief's are still active
     static boolean thievesActive() {
-        for (MovableActor thief : thieves) {
-            if (thief.active) return true;
-        }
+        for (MovableActor thief : thieves) { if (thief.active) return true; }
         return false;
     }
 }
-

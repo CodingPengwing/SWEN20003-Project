@@ -27,42 +27,28 @@ public class Location {
     /** Returns the x coordinate.
      * @return x coordinate.
      */
-    public double getX() {
-        return x;
-    }
+    public double getX() { return x; }
 
     /** Returns the y coordinate.
      * @return y coordinate.
      */
-    public double getY() {
-        return y;
-    }
+    public double getY() { return y; }
 
     /** Moves the Location one tile up */
-    public void moveUp() {
-        y = y - TILE_SIZE;
-    }
+    public void moveUp() { y -= TILE_SIZE; }
 
     /** Moves the Location one tile down */
-    public void moveDown() {
-        y = y + TILE_SIZE;
-    }
+    public void moveDown() { y += TILE_SIZE; }
 
     /** Moves the Location one tile left */
-    public void moveLeft() {
-        x = x - TILE_SIZE;
-    }
+    public void moveLeft() { x -= TILE_SIZE; }
 
     /** Moves the Location one tile right */
-    public void moveRight() {
-        x = x + TILE_SIZE;
-    }
+    public void moveRight() { x += TILE_SIZE; }
 
     /** Checks whether the given location is a well-defined tile */
     public static boolean isDefinedTile(double x, double y) {
-        if ((x % TILE_SIZE == 0) && (y % TILE_SIZE == 0)) {
-            return true;
-        }
+        if ((x % TILE_SIZE == 0) && (y % TILE_SIZE == 0)) return true;
         return false;
     }
 

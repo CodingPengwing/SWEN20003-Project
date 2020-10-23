@@ -6,7 +6,8 @@ import java.util.ArrayList;
 /** This class is the parent class for all Actor types that have a fruit count
  * of some sort (currently Tree, Hoard and Stockpile). It overrides the render()
  * method defined in the Actor parent class to also render the number of fruits
- * contained by the FruitStorage Actor alongside the its own image.
+ * (numFruit) contained by the FruitStorage Actor alongside the its own image.
+ * It offers strict methods to mutate the numFruit
  */
 public class FruitStorage extends Actor {
     // Default font and font size for rendering the fruit number
@@ -17,7 +18,7 @@ public class FruitStorage extends Actor {
     private final static int TREE_DEFAULT_NUM_FRUIT = 3;
     private final static int DEFAULT_NUM_FRUIT = 0;
 
-    private int numFruit;
+    private int numFruit = DEFAULT_NUM_FRUIT;
 
     /** Contructs a FruitStorage type of Actor. Upon creation, the number of fruits
      * is set depending on the specific type of Actor that was created (ie. Tree,
@@ -31,32 +32,23 @@ public class FruitStorage extends Actor {
      */
     public FruitStorage(ActorType type, double x, double y) {
         super(type, x, y);
-        switch (type) {
-            case TREE:
-                numFruit = TREE_DEFAULT_NUM_FRUIT;
-                break;
-            default:
-                numFruit = DEFAULT_NUM_FRUIT;
-        }
+        if (type == ActorType.TREE) numFruit = TREE_DEFAULT_NUM_FRUIT;
     }
 
     /** This method returns the number of fruits that the Actor is currently holding.
      * @return numFruit
      */
-    public int getNumFruit() {
-        return numFruit;
-    }
+    public int getNumFruit() { return numFruit; }
 
     /** Increments the number of fruits that the Actor holds (numFruit) by 1
      */
-    public void increaseNumFruit() {
-        numFruit++;
-    }
+    public void increaseNumFruit() { numFruit++; }
 
     /** Decrements the number of fruits that the Actor holds (numFruit) by 1
      */
     public void decreaseNumFruit() {
         if (numFruit > 0) numFruit--;
+        else System.err.println("Cannot decrease numFruit to negative number.");
     }
 
     /** Prints the number of fruits at each Hoard and Stockpile to stdout

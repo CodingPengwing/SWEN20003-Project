@@ -60,14 +60,10 @@ public abstract class MovableActor extends Actor {
     // Moves the Actor one tile in the direction they are currently facing
     final void move() {
         switch (direction.getDirection()) {
-            case Direction.UP:
-                location.moveUp(); break;
-            case Direction.RIGHT:
-                location.moveRight(); break;
-            case Direction.DOWN:
-                location.moveDown(); break;
-            case Direction.LEFT:
-                location.moveLeft(); break;
+            case Direction.UP: location.moveUp(); break;
+            case Direction.RIGHT: location.moveRight(); break;
+            case Direction.DOWN: location.moveDown(); break;
+            case Direction.LEFT: location.moveLeft(); break;
         }
     }
 
@@ -81,39 +77,26 @@ public abstract class MovableActor extends Actor {
         // Check for Fences, Pools, Signs and Pads in the same tile.
         for (Actor actor : actorsStandingOn) {
             switch (actor.getType()) {
-                case FENCE:
-                    interactFence(); break;
-                case POOL:
-                    interactPool(); break;
-                case SIGNUP:
-                    interactSignUp(); break;
-                case SIGNDOWN:
-                    interactSignDown(); break;
-                case SIGNLEFT:
-                    interactSignLeft(); break;
-                case SIGNRIGHT:
-                    interactSignRight(); break;
-                case PAD:
-                    interactPad(); break;
+                case FENCE: interactFence(); break;
+                case POOL: interactPool(); break;
+                case SIGNUP: interactSignUp(); break;
+                case SIGNDOWN: interactSignDown(); break;
+                case SIGNLEFT: interactSignLeft(); break;
+                case SIGNRIGHT: interactSignRight(); break;
+                case PAD: interactPad(); break;
             }
         }
         // Check for Gatherers in the same tile.
         for (MovableActor gatherer : Gatherer.gatherers) {
-            if (gatherer.locationEquals(this)) {
-                interactGatherer(); break;
-            }
+            if (gatherer.locationEquals(this)) interactGatherer(); break;
         }
         // Check for Trees, Hoards and Stockpiles in the same tile.
         for (Actor actor : actorsStandingOn) {
             switch (actor.getType()) {
-                case TREE:
-                    interactTree(actor); break;
-                case GOLDENTREE:
-                    interactGoldenTree(); break;
-                case HOARD:
-                    interactHoard(actor); break;
-                case STOCKPILE:
-                    interactStockpile(actor); break;
+                case TREE: interactTree(actor); break;
+                case GOLDENTREE: interactGoldenTree(); break;
+                case HOARD: interactHoard(actor); break;
+                case STOCKPILE: interactStockpile(actor); break;
             }
         }
     }
@@ -126,11 +109,8 @@ public abstract class MovableActor extends Actor {
 
     // Interaction with Sign
     final void interactSignUp() { direction.setDirection(Direction.UP); }
-
     final void interactSignDown() { direction.setDirection(Direction.DOWN); }
-
     final void interactSignLeft() { direction.setDirection(Direction.LEFT); }
-
     final void interactSignRight() { direction.setDirection(Direction.RIGHT); }
 
     // Interaction with Pad
@@ -151,16 +131,14 @@ public abstract class MovableActor extends Actor {
         // Create a new MovableActor
         MovableActor newActor;
         switch (getType()) {
-            case GATHERER:
-                newActor = new Gatherer(getX(), getY()); break;
-            default:
-                newActor = new Thief(getX(), getY());
+            case THIEF: newActor = new Thief(getX(), getY()); break;
+            default: newActor = new Gatherer(getX(), getY());
         }
         // Move left with the new MovableActor
         newActor.direction.setDirection(direction.getDirection());
         newActor.direction.rotateLeft();
         newActor.move();
-        // Move right with existing MovableActor
+        // Move right with existing MovableActor, reset to make it "new"
         direction.rotateRight();
         move();
         carrying = false;

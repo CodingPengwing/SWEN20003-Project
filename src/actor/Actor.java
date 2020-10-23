@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class Actor {
     // Location is made protected so that MovableActor can implement movement
     // logic inside the 'movable' package. It is declared final to restrict
-    // mutability in the current package. Movement logic should NOT be implemented
-    // anywhere outside the 'moveable' package.
+    // mutability. Movement logic should NOT be implemented anywhere outside
+    // the 'movable' package.
     protected final Location location;
     private Image image;
     private final ActorType type;
@@ -37,14 +37,13 @@ public class Actor {
         setImage(type);
         switch (type) {
             // MovableActor types, don't add to stationaryActors array
-            case GATHERER:
-            case THIEF: break;
+            case GATHERER: case THIEF: break;
             // stationary Actor types
             default: stationaryActors.add(this);
         }
     }
 
-    /** Returns the type of the Actor
+    /** Returns the type of the Actor, this enum object is immutable
      * @return instance of ActorType enum
      */
     public final ActorType getType() {
@@ -68,22 +67,16 @@ public class Actor {
     public static ArrayList<Actor> getStationaryActorsAtLocation(double x, double y) {
         ArrayList<Actor> output = new ArrayList<>();
         for (Actor actor : stationaryActors) {
-            if (actor.getX() == x && actor.getY() == y) {
-                output.add(actor);
-            }
+            if (actor.getX() == x && actor.getY() == y) output.add(actor);
         }
         return output;
     }
 
     /** Renders all stationary Actors onto the screen. */
-    public static void renderStationaryActors() {
-        for (Actor actor : stationaryActors) actor.render();
-    }
+    public static void renderStationaryActors() { for (Actor actor : stationaryActors) actor.render(); }
 
-    // Renders the image of the Actor at its location.
-    protected void render() {
-        image.drawFromTopLeft(getX(), getY());
-    }
+    // Renders the image of the Actor at its location. Can be overridden.
+    protected void render() { image.drawFromTopLeft(getX(), getY()); }
 
     // Returns the x coordinate of the Actor
     protected final double getX() { return location.getX(); }
@@ -93,11 +86,11 @@ public class Actor {
     // Returns all the Actors of the specified types given in the arguments.
     // To maintain the immutability of the 'stationaryActors' array, a partial
     // copy is returned through a new ArrayList.
-    protected static ArrayList<Actor> getStationaryActorsOfTypes(ActorType... types) {
+    protected static ArrayList<Actor> getStationaryActorsOfTypes(ActorType... requiredTypes) {
         ArrayList<Actor> output = new ArrayList<>();
         for (Actor actor : stationaryActors) {
-            for (ActorType type : types) {
-                if (actor.type.equals(type)) output.add(actor);
+            for (ActorType type : requiredTypes) {
+                if (actor.type.equals(type)) output.add(actor); break;
             }
         }
         return output;
@@ -107,34 +100,20 @@ public class Actor {
     // The following are all the default images for each type.
     private void setImage(ActorType type) {
         switch (type) {
-            case TREE:
-                image = new Image("src/res/images/tree.png"); break;
-            case GOLDENTREE:
-                image = new Image("src/res/images/gold-tree.png"); break;
-            case STOCKPILE:
-                image = new Image("src/res/images/cherries.png"); break;
-            case HOARD:
-                image = new Image("src/res/images/hoard.png"); break;
-            case PAD:
-                image = new Image("src/res/images/pad.png"); break;
-            case FENCE:
-                image = new Image("src/res/images/fence.png"); break;
-            case SIGNUP:
-                image = new Image("src/res/images/up.png"); break;
-            case SIGNDOWN:
-                image = new Image("src/res/images/down.png"); break;
-            case SIGNLEFT:
-                image = new Image("src/res/images/left.png"); break;
-            case SIGNRIGHT:
-                image = new Image("src/res/images/right.png"); break;
-            case POOL:
-                image = new Image("src/res/images/pool.png"); break;
-            case GATHERER:
-                image = new Image("src/res/images/gatherer.png"); break;
-            case THIEF:
-                image = new Image("src/res/images/thief.png"); break;
-            default:
-                System.err.println("error: no preset image for this actor type: " + type.toString());
+            case TREE: image = new Image("src/res/images/tree.png"); break;
+            case GOLDENTREE: image = new Image("src/res/images/gold-tree.png"); break;
+            case STOCKPILE: image = new Image("src/res/images/cherries.png"); break;
+            case HOARD: image = new Image("src/res/images/hoard.png"); break;
+            case PAD: image = new Image("src/res/images/pad.png"); break;
+            case FENCE: image = new Image("src/res/images/fence.png"); break;
+            case SIGNUP: image = new Image("src/res/images/up.png"); break;
+            case SIGNDOWN: image = new Image("src/res/images/down.png"); break;
+            case SIGNLEFT: image = new Image("src/res/images/left.png"); break;
+            case SIGNRIGHT: image = new Image("src/res/images/right.png"); break;
+            case POOL: image = new Image("src/res/images/pool.png"); break;
+            case GATHERER: image = new Image("src/res/images/gatherer.png"); break;
+            case THIEF: image = new Image("src/res/images/thief.png"); break;
+            default: System.err.println("error: no preset image for this actor type: "+type.toString());
         }
     }
 }
