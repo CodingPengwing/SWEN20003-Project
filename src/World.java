@@ -59,7 +59,7 @@ public class World {
         for (int i = 0; i < currentNumThieves; i++) {
             Thief thief = thieves.get(i);
             Actor newActor = thief.tick(stationaryActors, gatherers);
-            // If a new Thief was created during tick, add to 'gatherers'
+            // If a new Thief was created during tick, add to 'thieves'
             if (newActor != null) thieves.add((Thief) newActor);
         }
     }

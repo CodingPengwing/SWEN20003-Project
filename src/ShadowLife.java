@@ -55,7 +55,10 @@ public class ShadowLife extends AbstractGame {
     /** This is the start of the program. Creates an instance of ShadowLife and runs it.
      * @param args standard main args
      */
-    public static void main(String[] args) { new ShadowLife().run(); }
+    public static void main(String[] args) {
+        ShadowLife shadowLife = new ShadowLife();
+        shadowLife.run();
+    }
 
     /** This method provides AbstractGame with updates to the program. It renders
      * the game constantly, but only provides changes to the game after a full tick.

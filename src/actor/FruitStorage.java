@@ -2,11 +2,11 @@ package actor;
 
 import bagel.Font;
 
-/** This class is the parent class for all Actor types that have a fruit count
- * of some sort (currently Tree, Hoard and Stockpile). It overrides the render()
- * method defined in the Actor parent class to also render the number of fruits
- * (numFruit) contained by the FruitStorage Actor alongside the its own image.
- * It offers strict methods to mutate the numFruit
+/** This class is for all Actor types that have a fruit count of some sort
+ * (currently Tree, Hoard and Stockpile). It overrides the render() method
+ * defined in the Actor parent class to also render the number of fruits
+ * (numFruit) contained by the FruitStorage Actor alongside the its own
+ * image. It offers strict methods to mutate the numFruit.
  */
 public class FruitStorage extends Actor {
     // Default font and font size for rendering the fruit number
